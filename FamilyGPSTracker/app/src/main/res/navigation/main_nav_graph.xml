@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.example.familygpstracker.fragments.NotificationsFragment"
+        android:label="Notifications"
+        tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.example.familygpstracker.fragments.MenuFragment"
+        android:label="Menu"
+        tools:layout="@layout/fragment_menu" />
+    <fragment
+        android:id="@+id/liveTrackFragment"
+        android:name="com.example.familygpstracker.fragments.LiveTrackFragment"
+        android:label="Live Track"
+        tools:layout="@layout/fragment_live_track" />
+    <fragment
+        android:id="@+id/locationHistoryFragment"
+        android:name="com.example.familygpstracker.fragments.LocationHistoryFragment"
+        android:label="Location History"
+        tools:layout="@layout/fragment_location_history" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.familygpstracker.fragments.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" />
+</navigation>

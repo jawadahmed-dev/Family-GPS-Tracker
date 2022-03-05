@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "689701377190",
+    "project_id": "family-gps-tracker-61fb5",
+    "storage_bucket": "family-gps-tracker-61fb5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689701377190:android:20cf157879742500f71067",
+        "android_client_info": {
+          "package_name": "com.example.familygpstracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "689701377190-3b2ihh9hbjq1pii7rjpg16iavkfpskbn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.familygpstracker",
+            "certificate_hash": "705d8f8bbfe9dc5c7c553e95018bdd1e93318ee5"
+          }
+        },
+        {
+          "client_id": "689701377190-6b48un446tudta2l4a9gr7menk4rgrtb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3G4bRyzFtv6D2FZRp9_6MnX8ZH3N1ttk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "689701377190-6b48un446tudta2l4a9gr7menk4rgrtb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
