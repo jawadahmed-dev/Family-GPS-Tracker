@@ -8,7 +8,7 @@ import com.example.familygpstracker.activities.LoginActivity
 import com.example.familygpstracker.activities.MainActivity
 
 
-class SessionManager {
+class SessionManager(private val context: Context?) {
     // Shared Preferences
     var pref: SharedPreferences? = null
 
@@ -22,7 +22,7 @@ class SessionManager {
     var PRIVATE_MODE = 0
 
     // Sharedpref file name
-    private val PREF_NAME = "AndroidHivePref"
+    private val PREF_NAME = "AndroidPref"
 
     // All Shared Preferences Keys
     private val IS_LOGIN = "IsLoggedIn"
@@ -33,8 +33,13 @@ class SessionManager {
     // Email address (make variable public to access from outside)
     val KEY_EMAIL = "email"
 
+    val KEY_ID = "id"
+
+    val KEY_USER_TYPE = "userType"
+
     // Constructor
-    fun SessionManager(context: Context?) {
+
+    init {
         _context = context
         pref = _context?.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
         editor = pref!!.edit()
@@ -43,7 +48,7 @@ class SessionManager {
     /**
      * Create login session
      */
-    fun createLoginSession(name: String?, email: String?) {
+    fun createLoginSession(name: String?, email: String?, userType:String?, id:String?) {
         // Storing login value as TRUE
         editor?.putBoolean(IS_LOGIN, true)
 
@@ -52,6 +57,12 @@ class SessionManager {
 
         // Storing email in pref
         editor?.putString(KEY_EMAIL, email)
+
+        // Storing userType in pref
+        editor?.putString(KEY_USER_TYPE, userType)
+
+        // Storing id in pref
+        editor?.putString(KEY_ID, id)
 
         // commit changes
         editor?.commit()

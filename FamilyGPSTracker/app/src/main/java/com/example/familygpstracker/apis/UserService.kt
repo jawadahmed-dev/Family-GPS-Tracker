@@ -14,7 +14,7 @@ interface UserService {
 
     @GET("User/{email}")
     suspend fun getUser(
-        @Path("email") userId : String
+        @Path("email") email : String
     ) : Response<User>
 
 }

@@ -1,5 +1,6 @@
 package com.example.familygpstracker.fragments
 
+import android.R.attr
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -13,12 +14,21 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.familygpstracker.R
 import com.example.familygpstracker.apis.RetrofitHelper
+import com.example.familygpstracker.apis.UserService
 import com.example.familygpstracker.databinding.FragmentLoginBinding
 import com.example.familygpstracker.models.User
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
+import android.R.attr.data
+import android.content.Intent
+import com.example.familygpstracker.activities.MainActivity
+import retrofit2.Response
+import android.R.attr.data
+import com.example.familygpstracker.utility.SessionManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 class LoginFragment : Fragment(R.layout.activity_login) {
@@ -67,17 +77,16 @@ class LoginFragment : Fragment(R.layout.activity_login) {
             findNavController().navigate(directionToDecideUserFragment)
         }
         binding.loginBtn.setOnClickListener { view ->
-            binding.progressBar.visibility = View.VISIBLE
-            Handler(Looper.getMainLooper()).postDelayed({
-                reValidate()
-                if(isFormValid) verifyCredentials()
-                else binding.progressBar.visibility = View.INVISIBLE
+            enableProgressBar()
+            reValidate()
+            if(isFormValid) verifyCredentials()
+            else disableProgressBar()
                // submitForm()
-            }, 1500)
+
 
         }
     }
-    private fun submitForm() {
+   /* private fun submitForm() {
         val email = binding.emailContainer.helperText == null
         val password = binding.passwordContainer.helperText == null
         val direction=SignUpFragmentDirections.actionSignUpFragmentToDecideUserFragment()
@@ -112,27 +121,60 @@ class LoginFragment : Fragment(R.layout.activity_login) {
         binding.emailContainer.helperText="required"
         binding.passwordContainer.helperText="required"
     }
-
-    private fun verifyCredentials(){
+*/
+    private fun  verifyCredentials(){
         var retrofit = RetrofitHelper.getInstance()
-        var userService = retrofit.create(User::class.java)
+        var userService = retrofit.create(UserService::class.java)
+
         GlobalScope.launch {
-            
+
+            var result = userService.getUser(binding.email.text.toString())
+            binding.progressBar.visibility = View.INVISIBLE
+            if(result!=null && result.code() == 200){
+
+                var user = result.body()
+
+                if(user?.password == binding.password.text.toString()){
+                    createLoginSession(user)
+                    navigateToMain()
+                }
+            }else{
+                withContext(Dispatchers.Main){
+                    Toast.makeText(
+                        requireActivity(), "Email & Pass not correct!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
         }
+
     }
-    private fun reValidate2(){
+
+    private fun enableProgressBar()  { binding.progressBar.visibility = View.VISIBLE }
+    private fun disableProgressBar()  { binding.progressBar.visibility = View.INVISIBLE }
+
+    private fun createLoginSession(user:User){
+        SessionManager(requireActivity()).createLoginSession(user.name,user.email,user.userType.name,user.userId)
+    }
+
+    private fun navigateToMain(){
+        requireActivity().startActivity(Intent(requireActivity(),MainActivity::class.java))
+        requireActivity().finish()
+    }
+    private fun reValidate(){
+
         isEmailValid = validateEmail() == null
         isPasswordValid = validatePassword() == null
 
-        if(!isEmailValid) binding.emailContainer.helperText=validateEmail()
-        else isFormValid = false
+        binding.emailContainer.helperText=validateEmail()
+        binding.passwordContainer.helperText=validatePassword()
 
-        if(!isPasswordValid) binding.passwordContainer.helperText=validatePassword()
-        else isFormValid = false
+        if(!isEmailValid && !isPasswordValid) isFormValid = false
+        else isFormValid = true
 
-        if(isEmailValid && isPasswordValid ) isFormValid = true
     }
-    private fun reValidate() {
+  /*  private fun reValidate() {
         var email=binding.email.text.toString()
         var password = binding.password.text.toString()
         if((binding.email.isFocused && !email.isEmpty()) || (email.isEmpty())){
@@ -141,7 +183,7 @@ class LoginFragment : Fragment(R.layout.activity_login) {
         if((binding.password.isFocused && !password.isEmpty()) || (password.isEmpty())){
             binding.passwordContainer.helperText=validatePassword()
         }
-    }
+    }*/
     private fun validateEmail(): String? {
         var email=binding.email.text.toString()
         if(!email.isEmpty()) {
