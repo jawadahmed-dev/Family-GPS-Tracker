@@ -1,6 +1,7 @@
 package com.example.familygpstracker.models
 
-data class Parent(
+data class ParentDetail(
+    val children: List<Child>,
     val email: String,
     val name: String,
     val parentId: String,

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_link_device_nav_graph"
+    app:startDestination="@id/loadingFragment">
+
+    <fragment
+        android:id="@+id/connectDeviceFragment"
+        android:name="com.example.familygpstracker.fragments.ConnectDeviceFragment"
+        android:label="fragment_connect_device"
+        tools:layout="@layout/fragment_connect_device" >
+        <action
+            android:id="@+id/action_connectDeviceFragment_to_enterCodeFragment"
+            app:destination="@id/enterCodeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/enterCodeFragment"
+        android:name="com.example.familygpstracker.fragments.EnterCodeFragment"
+        android:label="fragment_enter_code"
+        tools:layout="@layout/fragment_enter_code" >
+        <action
+            android:id="@+id/action_enterCodeFragment2_to_connectDeviceFragment"
+            app:destination="@id/connectDeviceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="com.example.familygpstracker.LoadingFragment"
+        android:label="fragment_loading"
+        tools:layout="@layout/fragment_loading" >
+        <action
+            android:id="@+id/action_loadingFragment_to_connectDeviceFragment"
+            app:destination="@id/connectDeviceFragment" />
+    </fragment>
+</navigation>

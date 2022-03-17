@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.familygpstracker.R
+import com.example.familygpstracker.activities.ParentActivity
 import com.example.familygpstracker.adapter.ChildListAdapter
 import com.example.familygpstracker.adapter.ViewPagerAdapter
 import com.example.familygpstracker.databinding.FragmentHomeBinding
@@ -18,8 +19,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 class HomeFragment : Fragment() {
 
     private lateinit var binding:FragmentHomeBinding
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,13 +48,16 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
        // var map : SupportMapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
        // map.getMapAsync(this)
-        var list = ArrayList<String>(3);
-        list.add("john doe");
-        list.add("john doe");
-        list.add("john doe");
-        var adapter = ChildListAdapter(list,requireActivity());
-        binding.familyMembersListView.layoutManager= LinearLayoutManager(requireActivity(),LinearLayoutManager.HORIZONTAL,false)
-        binding.familyMembersListView.adapter = adapter;
+
+        // SetUp RecyclerView
+        setUpRecyclerView()
+
+        // SetUp ViewPager
+        setUpViewPager(view)
+
+    }
+
+    private fun setUpViewPager(view: View) {
         var tabLayout=view.findViewById<TabLayout>(R.id.tabLayout)
         var viewPager=view.findViewById<ViewPager2>(R.id.viewPager)
 
@@ -67,13 +69,22 @@ class HomeFragment : Fragment() {
                 else -> tab.text="Live Tracking"
             }
         }.attach()
-
     }
 
-   /* override fun onMapReady(p0: GoogleMap) {
-        var rawalpindiCBlock: LatLng = LatLng(33.632687, 73.076726)
-        p0.addMarker(MarkerOptions().position(rawalpindiCBlock).title("Rawalpindi C-Block"))
-        p0.moveCamera(CameraUpdateFactory.newLatLng(rawalpindiCBlock))
-    }*/
+    /* override fun onMapReady(p0: GoogleMap) {
+         var rawalpindiCBlock: LatLng = LatLng(33.632687, 73.076726)
+         p0.addMarker(MarkerOptions().position(rawalpindiCBlock).title("Rawalpindi C-Block"))
+         p0.moveCamera(CameraUpdateFactory.newLatLng(rawalpindiCBlock))
+     }*/
+
+    private fun setUpRecyclerView(){
+        var list = ArrayList<String>(3);
+        list.add("john doe");
+        list.add("john doe");
+        list.add("john doe");
+        var adapter = ChildListAdapter(list,requireActivity());
+        binding.familyMembersListView.layoutManager= LinearLayoutManager(requireActivity(),LinearLayoutManager.HORIZONTAL,false)
+        binding.familyMembersListView.adapter = adapter;
+    }
 
 }

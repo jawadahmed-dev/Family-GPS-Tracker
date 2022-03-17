@@ -1,26 +1,43 @@
 package com.example.familygpstracker.fragments
 
+import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.familygpstracker.R
+import com.example.familygpstracker.apis.ParentService
+import com.example.familygpstracker.apis.RetrofitHelper
+import com.example.familygpstracker.apis.UserService
 import com.example.familygpstracker.databinding.FragmentSignUpBinding
+import com.example.familygpstracker.models.RegisterParent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class SignUpFragment : Fragment() {
 
     private val directionToSignUpFragment = SignUpFragmentDirections.actionSignUpFragmentToDecideUserFragment()
     private val args : SignUpFragmentArgs by navArgs()
+    private var isUserNameValid = false
+    private var isEmailValid = false
+    private var isPasswordValid = false
+    private var isPhoneNumberValid = false
+    private var isFormValid = false
     private lateinit var binding:FragmentSignUpBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,8 +50,10 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         changeStatusBarColor()
         registerListeners()
+
         Toast.makeText(requireActivity(),args.userType, Toast.LENGTH_LONG).show()
     }
+
     private fun changeStatusBarColor() {
         if (Build.VERSION.SDK_INT >= 21) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -42,8 +61,8 @@ class SignUpFragment : Fragment() {
             }
         }
     }
-    private fun registerListeners() {
 
+    private fun registerListeners() {
 
         binding.username.setOnFocusChangeListener{view,focused ->
             if(!focused){
@@ -62,7 +81,7 @@ class SignUpFragment : Fragment() {
         }
         binding.phonenumber.setOnFocusChangeListener{view,focused ->
             if(!focused){
-                binding.phonenumberContainer.helperText= validatePhonenumber()
+                binding.phonenumberContainer.helperText= validatePhoneNumber()
             }
         }
         binding.signupBackBtn.setOnClickListener{ view ->
@@ -70,15 +89,99 @@ class SignUpFragment : Fragment() {
         }
         binding.signUpBtn.setOnClickListener { view ->
             binding.progressBar.visibility = View.VISIBLE
-            Handler(Looper.getMainLooper()).postDelayed({
-                reValidate()
-                submitForm()
-            }, 1500)
+            reValidate()
+            submitForm()
 
         }
     }
 
-    private fun reValidate() {
+    private fun submitForm() {
+
+        if (isFormValid) {
+
+            var payload = makePayLoad()
+
+            var retrofit = RetrofitHelper.getInstance()
+
+            var parentService = retrofit.create(ParentService::class.java)
+
+            GlobalScope.launch {
+
+                var result = parentService.registerParent(payload)
+
+                binding.progressBar.visibility = View.INVISIBLE
+
+                if (result != null && result.code() == 200) {
+
+                    result.errorBody()
+
+                    withContext(Dispatchers.Main) {
+                        showSuccessMessage()
+                    }
+                }
+                else {
+                    Log.d("Error", "" + result.errorBody())
+                    withContext(Dispatchers.Main) {
+                        showFailureMessage()
+                    }
+                }
+
+            }
+        }
+
+        binding.progressBar.visibility = View.INVISIBLE
+    }
+
+    private fun showSuccessMessage() {
+
+        var layout : View = requireActivity().layoutInflater.inflate(R.layout.success_message , null)
+        var alertDialog = AlertDialog.Builder(requireActivity())
+            .setView(layout)
+            .create()
+        alertDialog.show()
+        layout.findViewById<Button>(R.id.succesMessageButton).setOnClickListener({
+            alertDialog.dismiss()
+        })
+    }
+
+    private fun showFailureMessage() {
+
+        var layout : View = requireActivity().layoutInflater.inflate(R.layout.failure_message , null)
+        var alertDialog = AlertDialog.Builder(requireActivity())
+            .setView(layout)
+            .create()
+        alertDialog.show()
+        layout.findViewById<Button>(R.id.failureMessageButton).setOnClickListener({
+            alertDialog.dismiss()
+        })
+    }
+
+
+    private fun makePayLoad() : RegisterParent{
+       return RegisterParent(
+            binding.username.text.toString(),
+            binding.email.text.toString(),
+            binding.password.text.toString(),
+            binding.phonenumber.text.toString())
+    }
+
+    private fun reValidate(){
+        isUserNameValid = validateUsername() == null
+        isEmailValid = validateEmail() == null
+        isPasswordValid = validatePassword() == null
+        isPhoneNumberValid = validatePhoneNumber() == null
+
+        binding.usernameContainer.helperText=validateUsername()
+        binding.passwordContainer.helperText=validatePassword()
+        binding.emailContainer.helperText=validateEmail()
+        binding.phonenumberContainer.helperText=validatePhoneNumber()
+
+        if(!isEmailValid && !isPasswordValid && !isUserNameValid && !isPhoneNumberValid) isFormValid = false
+        else isFormValid = true
+
+    }
+
+   /* private fun reValidate() {
         var username=binding.username.text.toString()
         var email=binding.email.text.toString()
         var phonenumber=binding.phonenumber.text.toString()
@@ -96,8 +199,8 @@ class SignUpFragment : Fragment() {
             binding.passwordContainer.helperText=validatePassword()
         }
     }
-
-    private fun submitForm() {
+*/
+   /* private fun submitForm() {
         val username = binding.usernameContainer.helperText == null
         val email = binding.emailContainer.helperText == null
         val phonenumber = binding.phonenumberContainer.helperText == null
@@ -126,7 +229,7 @@ class SignUpFragment : Fragment() {
         binding.progressBar.visibility = View.INVISIBLE
        // findNavController().navigate(direction)
     }
-
+*/
     private fun validateUsername():String?{
         var username=binding.username.text.toString()
         if(!username.isEmpty()) {
@@ -148,13 +251,13 @@ class SignUpFragment : Fragment() {
         return null
     }
 
-    private fun validatePhonenumber(): String? {
-        var phonenumber=binding.phonenumber.text.toString()
-        if(!phonenumber.isEmpty()) {
-            if (!phonenumber.matches(".*^[0-9]+$.*".toRegex())){
+    private fun validatePhoneNumber(): String? {
+        var phoneNumber=binding.phonenumber.text.toString()
+        if(!phoneNumber.isEmpty()) {
+            if (!phoneNumber.matches(".*^[0-9]+$.*".toRegex())){
                 return "Must be all Digits"
             }
-            if(phonenumber.length!=11){
+            if(phoneNumber.length!=11){
                 return "Must be of 11 Digits"
             }
         }else {
@@ -162,17 +265,27 @@ class SignUpFragment : Fragment() {
         }
         return null
     }
+
     private fun validateEmail(): String? {
+
         var email=binding.email.text.toString()
+
         if(!email.isEmpty()) {
+
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 return "invalid email address"
             }
-        }else {
+
+        }
+        else {
+
             return "required"
+
         }
         return null
+
     }
+
     private fun validatePassword(): String? {
         var password = binding.password.text.toString()
         if(!password.isEmpty()){

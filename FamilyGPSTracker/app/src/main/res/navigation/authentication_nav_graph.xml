@@ -34,7 +34,8 @@
         <argument
             android:name="userType"
             app:argType="string"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="parent" />
     </fragment>
     <fragment
         android:id="@+id/decideUserFragment"

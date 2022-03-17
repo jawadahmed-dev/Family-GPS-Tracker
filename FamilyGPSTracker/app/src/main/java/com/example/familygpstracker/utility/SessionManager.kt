@@ -4,8 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import com.example.familygpstracker.activities.AuthenticationActivity
-import com.example.familygpstracker.activities.LoginActivity
-import com.example.familygpstracker.activities.MainActivity
+import com.example.familygpstracker.activities.ParentActivity
 
 
 class SessionManager(private val context: Context?) {
@@ -27,13 +26,15 @@ class SessionManager(private val context: Context?) {
     // All Shared Preferences Keys
     private val IS_LOGIN = "IsLoggedIn"
 
-    // User name (make variable public to access from outside)
-    val KEY_NAME = "name"
+    // Parent Id (make variable public to access from outside)
+    val KEY_ParentId = "parentId"
 
-    // Email address (make variable public to access from outside)
-    val KEY_EMAIL = "email"
+    val DEVICE_TOKEN = "deviceToken"
 
-    val KEY_ID = "id"
+    // Child Id (make variable public to access from outside)
+    val KEY_ChildId = "childId"
+
+    val KEY_UserId = "userId"
 
     val KEY_USER_TYPE = "userType"
 
@@ -48,21 +49,36 @@ class SessionManager(private val context: Context?) {
     /**
      * Create login session
      */
-    fun createLoginSession(name: String?, email: String?, userType:String?, id:String?) {
+    fun createParentLoginSession(parentId: String?, userType:String?, userId:String?) : Unit {
         // Storing login value as TRUE
         editor?.putBoolean(IS_LOGIN, true)
 
         // Storing name in pref
-        editor?.putString(KEY_NAME, name)
+        editor?.putString(KEY_ParentId, parentId)
 
-        // Storing email in pref
-        editor?.putString(KEY_EMAIL, email)
 
         // Storing userType in pref
         editor?.putString(KEY_USER_TYPE, userType)
 
         // Storing id in pref
-        editor?.putString(KEY_ID, id)
+        editor?.putString(KEY_UserId, userId)
+
+        // commit changes
+        editor?.commit()
+    }
+
+    fun createChildLoginSession( childId: String?, userType:String?, userId:String?) {
+        // Storing login value as TRUE
+        editor?.putBoolean(IS_LOGIN, true)
+
+        // Storing email in pref
+        editor?.putString(KEY_ChildId, childId)
+
+        // Storing userType in pref
+        editor?.putString(KEY_USER_TYPE, userType)
+
+        // Storing id in pref
+        editor?.putString(KEY_UserId, userId)
 
         // commit changes
         editor?.commit()
@@ -93,16 +109,16 @@ class SessionManager(private val context: Context?) {
     /**
      * Get stored session data
      */
-    fun getUserDetails(): HashMap<String, String?>? {
-        val user = HashMap<String, String?>()
-        // user name
-        user[KEY_NAME] = pref!!.getString(KEY_NAME, null)
+    fun getParentId(): String? {
+        return pref!!.getString(KEY_ParentId, null)
+    }
 
-        // user email id
-        user[KEY_EMAIL] = pref!!.getString(KEY_EMAIL, null)
+    fun getChildId(): String? {
+        return pref!!.getString(KEY_ChildId, null)
+    }
 
-        // return user
-        return user
+    fun getUserType() : String? {
+        return pref!!.getString(KEY_USER_TYPE, null)
     }
 
     /**
@@ -123,7 +139,12 @@ class SessionManager(private val context: Context?) {
 
         // Staring Login Activity
         _context?.startActivity(i)
-        (_context as MainActivity)?.finish()
+        (_context as ParentActivity)?.finish()
+    }
+
+    fun storeToken(token:String){
+        editor?.putString(DEVICE_TOKEN,token)
+        editor?.commit()
     }
 
     /**

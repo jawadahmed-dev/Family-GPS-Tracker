@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/child_link_device_nav_graph"
+    app:startDestination="@id/generateCodeFragment">
+
+    <fragment
+        android:id="@+id/loadingFragment2"
+        android:name="com.example.familygpstracker.LoadingFragment"
+        android:label="fragment_loading"
+        tools:layout="@layout/fragment_loading" >
+        <action
+            android:id="@+id/action_loadingFragment2_to_generateCodeFragment"
+            app:destination="@id/generateCodeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/generateCodeFragment"
+        android:name="com.example.familygpstracker.fragments.GenerateCodeFragment"
+        android:label="fragment_generate_code"
+        tools:layout="@layout/fragment_generate_code" >
+        <action
+            android:id="@+id/action_generateCodeFragment_to_childScreenFragment"
+            app:destination="@id/childScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/childScreenFragment"
+        android:name="com.example.familygpstracker.ChildScreenFragment"
+        android:label="fragment_child_screen"
+        tools:layout="@layout/fragment_child_screen" />
+</navigation>

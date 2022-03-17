@@ -7,13 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.example.familygpstracker.R
 import com.example.familygpstracker.databinding.FragmentConnectDeviceBinding
 import com.example.familygpstracker.databinding.FragmentDecideUserBinding
 
 class ConnectDeviceFragment : Fragment() {
-    /*private lateinit var binding: FragmentConnectDeviceBinding
-    private val directionToDecideUserFragment = ConnectDeviceFragmentDirections.actionConnectDeviceFragmentToDecideUserFragment()
-    private val directionToGenerateCodeFragment=ConnectDeviceFragmentDirections.actionConnectDeviceFragmentToGenerateCodeFragment()
+    private lateinit var binding: FragmentConnectDeviceBinding
+    private val directionToEnterCodeFragment = ConnectDeviceFragmentDirections.actionConnectDeviceFragmentToEnterCodeFragment()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,11 +30,9 @@ class ConnectDeviceFragment : Fragment() {
 
     private fun registerListeners() {
         binding.connectDeviceButton.setOnClickListener{view ->
-            findNavController().navigate(directionToGenerateCodeFragment)
+            findNavController().navigate(directionToEnterCodeFragment)
         }
-        binding.connectDeviceBackBtn.setOnClickListener{view ->
-            findNavController().navigate(directionToDecideUserFragment)
-        }
+
     }
     private fun changeStatusBarColor() {
         if (Build.VERSION.SDK_INT >= 21) {
@@ -42,5 +40,5 @@ class ConnectDeviceFragment : Fragment() {
                 requireActivity().window.statusBarColor= resources.getColor(R.color.white,null)
             }
         }
-    }*/
+    }
 }

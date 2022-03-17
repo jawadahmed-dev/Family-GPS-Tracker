@@ -3,7 +3,23 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/drawable/ic_baseline_check_circle_outline_24.xml" value="0.2046875" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/activity_authentication.xml" value="0.18854166666666666" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/activity_child.xml" value="0.17708333333333334" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/activity_child_link_device.xml" value="0.19021739130434784" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/activity_login.xml" value="0.1526268115942029" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/activity_main.xml" value="0.15806159420289856" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/activity_parent_link_device.xml" value="0.16983695652173914" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/failure_message.xml" value="0.17844202898550723" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/fragment_connect_device.xml" value="0.21" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/fragment_enter_code.xml" value="0.18" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/fragment_generate_code.xml" value="0.17391304347826086" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/fragment_home.xml" value="0.20416666666666666" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/fragment_loading.xml" value="0.20416666666666666" />
         <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/fragment_login.xml" value="0.1" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/fragment_sign_up.xml" value="0.10416666666666667" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/item_family_member.xml" value="0.16893115942028986" />
+        <entry key="..\:/FYP Project/FamilyGPSTracker/app/src/main/res/layout/success_message.xml" value="0.21" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/FamilyGPSTracker/app/src/main/res/drawable-v24/ic_app_icon_new.xml" value="0.17916666666666667" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/FamilyGPSTracker/app/src/main/res/drawable-v24/ic_app_logo.xml" value="0.19479166666666667" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/FamilyGPSTracker/app/src/main/res/drawable-v24/ic_bottom_pic.xml" value="0.17916666666666667" />
