@@ -26,10 +26,15 @@ class SessionManager(private val context: Context?) {
     // All Shared Preferences Keys
     private val IS_LOGIN = "IsLoggedIn"
 
+    // All Shared Preferences Keys
+    private val KEY_EXPIRY_TIME = "expiryTime"
+
     // Parent Id (make variable public to access from outside)
     val KEY_ParentId = "parentId"
 
     val DEVICE_TOKEN = "deviceToken"
+
+    val KEY_CHILD_PARENT_ID = "childParentId"
 
     // Child Id (make variable public to access from outside)
     val KEY_ChildId = "childId"
@@ -117,8 +122,30 @@ class SessionManager(private val context: Context?) {
         return pref!!.getString(KEY_ChildId, null)
     }
 
+    fun getChildParentId(): String? {
+        return pref!!.getString(KEY_CHILD_PARENT_ID, null)
+    }
+
+    fun getDeviceToken(): String? {
+        return pref!!.getString(DEVICE_TOKEN, null)
+    }
+
+    fun storeChildParentId(parentID:String){
+        editor?.putString(KEY_CHILD_PARENT_ID,parentID)
+        editor?.commit()
+    }
+
     fun getUserType() : String? {
         return pref!!.getString(KEY_USER_TYPE, null)
+    }
+
+    fun getExpiryTime() : String? {
+        return pref!!.getString(KEY_EXPIRY_TIME,null)
+    }
+
+    fun setExpiryTime(expirytime:String){
+        editor?.putString(KEY_EXPIRY_TIME,expirytime)
+        editor?.commit()
     }
 
     /**

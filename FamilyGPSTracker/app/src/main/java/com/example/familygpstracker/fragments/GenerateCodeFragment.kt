@@ -20,11 +20,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class GenerateCodeFragment : Fragment() {
     private lateinit var binding:FragmentGenerateCodeBinding
-
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,11 +38,42 @@ class GenerateCodeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initDataMembers()
         changeStatusBarColor()
+        checkCodeExpiry()
         binding.refreshBtn.setOnClickListener{
             applyRotateAnimation()
             refreshPairingCode()
         }
+    }
+
+    private fun initDataMembers() {
+        sessionManager = SessionManager(requireActivity())
+    }
+
+    private fun checkCodeExpiry() {
+        var expiryTimeString = sessionManager.getExpiryTime()
+        var currentTimeString = SimpleDateFormat("HH:mm a").format(Date())
+
+        if(expiryTimeString == null){
+            expiryTimeString = getCodeExpiryTime(currentTimeString)
+            sessionManager.setExpiryTime(expiryTimeString)
+            binding.pairingCodeInfo.text ="*Your code is only valid till "+ expiryTimeString
+        }
+        else if(isExpiryTimeHasPassed(expiryTimeString,currentTimeString)){
+
+            binding.pairingCodeInfo.text = "your code has expired."
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                binding.pairingCodeInfo.setTextColor(requireActivity().getColor(R.color.cherry_red_opacity_55))
+            }
+        }
+    }
+
+    private fun isExpiryTimeHasPassed(expiryTimeString:String, currentTimeString:String): Boolean {
+        var expiryTime : Date = SimpleDateFormat("HH:mm a").parse(expiryTimeString)
+        var currentTime : Date = SimpleDateFormat("HH:mm a").parse(currentTimeString)
+        if(expiryTime.before(currentTime)) return true
+        else return false
     }
 
     private fun refreshPairingCode() {
@@ -54,6 +87,12 @@ class GenerateCodeFragment : Fragment() {
                 withContext(Dispatchers.Main){
                     binding.refreshBtn.clearAnimation()
                     binding.pairingCodeText.text = result.body()?.code
+                    var expiryTimeString = getCodeExpiryTime(SimpleDateFormat("HH:mm a").format(Date()))
+                    binding.pairingCodeInfo.text ="*Your code is only valid till " + expiryTimeString
+                    sessionManager.setExpiryTime(expiryTimeString)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        binding.pairingCodeInfo.setTextColor(requireActivity().getColor(R.color.light_blue_opacity_50))
+                    }
                 }
 
             }
@@ -84,21 +123,29 @@ class GenerateCodeFragment : Fragment() {
             }
         }
     }
+    private fun getCodeExpiryTime(time: String): String {
 
-    override fun onStop() {
-        super.onStop()
+        var timeHour = getCodeExpiryTimeHour(time.substring(0,2).toInt())
+        var timePeriod = getCodeExpiryTimePeriod(time.substring(6,8),timeHour)
+        var timeMinute = time.substring(3,5)
+        return timeHour.toString() + ":" + timeMinute + " " + timePeriod
     }
 
-    override fun onStart() {
-        super.onStart()
+    private fun getCodeExpiryTimePeriod(period : String , hour : Int) : String {
+
+        if(hour == 12 || hour == 1 || hour == 2){
+            when(period){
+                "am" -> return "pm"
+                "pm" -> return "am"
+            }
+        }
+        return period
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
+    private fun getCodeExpiryTimeHour(hour : Int) : Int{
 
-    override fun onPause() {
-        super.onPause()
+        if(hour >= 11) return (hour - 0)
+        else return (hour + 2)
     }
 
 

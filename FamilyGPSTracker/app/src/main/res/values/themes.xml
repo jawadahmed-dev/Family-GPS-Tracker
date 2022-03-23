@@ -25,4 +25,11 @@
     <style name="progressColor" parent="Widget.AppCompat.ProgressBar">
         <item name="colorControlActivated">@color/light_cyan</item>
     </style>
+
+    <style name="Theme.Transparent" parent="Theme.AppCompat.Light.NoActionBar">
+
+
+
+        <item name="android:statusBarColor" tools:targetApi="l">@color/white</item>
+    </style>
 </resources>

@@ -2,8 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/parent_link_device_nav_graph"
-    app:startDestination="@id/loadingFragment">
+    android:id="@+id/parent_link_device_nav_graph">
 
     <fragment
         android:id="@+id/connectDeviceFragment"
@@ -21,15 +20,6 @@
         tools:layout="@layout/fragment_enter_code" >
         <action
             android:id="@+id/action_enterCodeFragment2_to_connectDeviceFragment"
-            app:destination="@id/connectDeviceFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/loadingFragment"
-        android:name="com.example.familygpstracker.LoadingFragment"
-        android:label="fragment_loading"
-        tools:layout="@layout/fragment_loading" >
-        <action
-            android:id="@+id/action_loadingFragment_to_connectDeviceFragment"
             app:destination="@id/connectDeviceFragment" />
     </fragment>
 </navigation>

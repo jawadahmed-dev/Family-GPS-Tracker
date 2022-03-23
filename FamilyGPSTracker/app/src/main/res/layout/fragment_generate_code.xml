@@ -15,7 +15,8 @@
         android:fontFamily="@font/archivo_black"
         android:text="Your pairing code is"
         android:textColor="@color/light_blue"
-        android:textSize="16sp"
+        android:textSize="26dp"
+        android:layout_marginBottom="16dp"
         android:textStyle="normal"
         app:layout_constraintBottom_toTopOf="@+id/pairingCodeText"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,27 +31,27 @@
         android:layout_height="0dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="215dp"
+        android:layout_marginBottom="180dp"
         android:background="@drawable/container_shape"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6">
+        app:layout_constraintTop_toBottomOf="@+id/pairingCodeInfo">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
             android:layout_marginHorizontal="20dp"
-            android:text="How to pair:"
+            android:layout_marginTop="35dp"
             android:fontFamily="@font/archivo_black"
-            android:textColor="@color/light_blue"
-            />
+            android:text="How to pair:"
+            android:textColor="@color/light_blue" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="55dp"
             android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="70dp"
             android:text="1. Install FamilyGPSTracker app on your kid's device.\n\n2. Open Family GPS Tracker app, and tap the 'Pair'\nwith Code' button.\n\n3. Use the pairing code above.\n\n4. Finish the remaining setup process on your\nkid's device."
             android:textColor="@color/light_blue" />
     </RelativeLayout>
@@ -59,7 +60,7 @@
         android:id="@+id/pairingCodeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="132dp"
+        android:layout_marginTop="150dp"
         android:layout_marginBottom="65dp"
         android:fontFamily="@font/archivo_black"
         android:text="03038"
@@ -82,24 +83,15 @@
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/pairingCodeInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="42dp"
-        android:layout_marginTop="250dp"
+        android:layout_marginTop="270dp"
         android:text="*Pairing code will be valid for 1 hour or until being used once."
         android:textColor="@color/light_blue_opacity_50"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/generateCodeBackBtn"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/left_arrow"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

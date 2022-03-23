@@ -5,5 +5,6 @@ data class Parent(
     val name: String,
     val parentId: String,
     val password: String,
-    val phoneNumber: String
+    val phoneNumber: String,
+    val deviceToken: String
 )

@@ -8,5 +8,6 @@ class ChildLinkDeviceActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_child_link_device)
+
     }
 }

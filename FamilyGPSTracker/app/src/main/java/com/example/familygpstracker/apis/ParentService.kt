@@ -1,13 +1,11 @@
 package com.example.familygpstracker.apis
 
+import com.example.familygpstracker.models.DeviceToken
 import com.example.familygpstracker.models.Parent
 import com.example.familygpstracker.models.ParentDetail
 import com.example.familygpstracker.models.RegisterParent
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface ParentService {
 
@@ -20,5 +18,11 @@ interface ParentService {
     suspend fun getParentDetails(
         @Path("id") id : String
     ) : Response<ParentDetail>
+
+    @PUT("/parent/token/{id}")
+    suspend fun updateDeviceToken(
+        @Path("id") id : String,
+        @Body deviceToken:String
+    ) : Response<Parent>
 
 }

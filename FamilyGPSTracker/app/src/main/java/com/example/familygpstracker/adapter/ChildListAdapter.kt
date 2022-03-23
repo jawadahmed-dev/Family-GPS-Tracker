@@ -9,14 +9,14 @@ import com.example.familygpstracker.R
 import com.example.familygpstracker.databinding.ItemFamilyMemberBinding
 
 class ChildListAdapter(private val listOfChild : List<String>,private val context:Context) :
-    RecyclerView.Adapter<ChildListAdapter.ViewHolder>() {
+    RecyclerView.Adapter<ChildListAdapter.ChildHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChildHolder {
         val binding = DataBindingUtil.inflate<ItemFamilyMemberBinding>(LayoutInflater.from(parent.context),R.layout.item_family_member, parent, false)
-        return ViewHolder(binding)
+        return ChildHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ChildHolder, position: Int) {
         holder.itemView.setOnClickListener({
 
         })
@@ -26,5 +26,5 @@ class ChildListAdapter(private val listOfChild : List<String>,private val contex
         return listOfChild.size
     }
 
-    class ViewHolder(binding: ItemFamilyMemberBinding) : RecyclerView.ViewHolder(binding.root)
+    class ChildHolder(binding: ItemFamilyMemberBinding) : RecyclerView.ViewHolder(binding.root)
 }
