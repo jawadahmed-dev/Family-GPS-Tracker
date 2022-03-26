@@ -11,6 +11,7 @@
     <color name="dark_red">#8B0000</color>
     <color name="dark_grey">#A9A9A9</color>
     <color name="light_grey">#F2F2F2</color>
+    <color name="grey">#D3D3D3</color>
     <color name="light_cyan">#3bcaed</color>
     <color name="light_blue">#68BBDC</color>
     <color name="light_blue_opacity_5">#0D68BBDC</color>

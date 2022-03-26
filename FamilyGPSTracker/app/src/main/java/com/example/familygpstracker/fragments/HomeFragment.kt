@@ -1,24 +1,32 @@
 package com.example.familygpstracker.fragments
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.familygpstracker.R
 import com.example.familygpstracker.activities.ParentActivity
+import com.example.familygpstracker.activities.ParentLinkDeviceActivity
 import com.example.familygpstracker.adapter.ChildListAdapter
+import com.example.familygpstracker.adapter.NotificationListAdapter
 import com.example.familygpstracker.adapter.ViewPagerAdapter
 import com.example.familygpstracker.databinding.FragmentHomeBinding
+import com.example.familygpstracker.models.Child
+import com.example.familygpstracker.models.Notification
+import com.example.familygpstracker.viewmodels.MainViewModel
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class HomeFragment : Fragment() {
 
     private lateinit var binding:FragmentHomeBinding
+    private lateinit var viewModel: MainViewModel
+    private lateinit var childListAdapter: ChildListAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,15 +54,39 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initDataMembers()
+        setHasOptionsMenu(true);
        // var map : SupportMapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
        // map.getMapAsync(this)
 
         // SetUp RecyclerView
-        setUpRecyclerView()
+     /*   setUpRecyclerView()
 
         // SetUp ViewPager
         setUpViewPager(view)
 
+        // Register Observer
+        registerObserver()
+*/
+    }
+
+    private fun registerObserver() {
+        viewModel.parentDetail.observe(requireActivity()  , {
+            childListAdapter.setChildrens(it.children)
+        }  )
+    }
+
+    private fun initDataMembers() {
+        initChildListAdapter()
+        initMainViewModel()
+    }
+
+    private fun initChildListAdapter() {
+        childListAdapter = ChildListAdapter(ArrayList<Child>(),requireActivity())
+    }
+
+    private fun initMainViewModel() {
+        viewModel = (requireActivity() as ParentActivity).mainViewModel
     }
 
     private fun setUpViewPager(view: View) {
@@ -82,9 +114,20 @@ class HomeFragment : Fragment() {
         list.add("john doe");
         list.add("john doe");
         list.add("john doe");
-        var adapter = ChildListAdapter(list,requireActivity());
+        var adapter = childListAdapter
         binding.familyMembersListView.layoutManager= LinearLayoutManager(requireActivity(),LinearLayoutManager.HORIZONTAL,false)
         binding.familyMembersListView.adapter = adapter;
     }
 
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater){
+        inflater.inflate(R.menu.options_menu,menu)
+        return super.onCreateOptionsMenu(menu,inflater)
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        super.onOptionsItemSelected(item)
+        startActivity(Intent(requireActivity(),ParentLinkDeviceActivity::class.java))
+        requireActivity().finish()
+        return true
+    }
 }

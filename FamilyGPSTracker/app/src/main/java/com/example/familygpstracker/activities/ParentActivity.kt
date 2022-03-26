@@ -13,10 +13,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.familygpstracker.R
-import com.example.familygpstracker.apis.ParentService
-import com.example.familygpstracker.apis.RetrofitHelper
-import com.example.familygpstracker.apis.UserService
+import com.example.familygpstracker.apis.*
 import com.example.familygpstracker.databinding.ActivityMainBinding
+import com.example.familygpstracker.repositories.LocationRepository
+import com.example.familygpstracker.repositories.NotificationRepository
 import com.example.familygpstracker.repositories.ParentRepository
 import com.example.familygpstracker.repositories.UserRepository
 import com.example.familygpstracker.viewmodels.MainViewModel
@@ -32,6 +32,7 @@ class ParentActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+
 
         LinkBottonNavWithNavController();
 
@@ -76,7 +77,7 @@ class ParentActivity : AppCompatActivity() {
 
         appBarConfiguration=AppBarConfiguration(
             setOf(
-                R.id.liveTrackFragment,
+                R.id.homeFragment,
                 R.id.locationHistoryFragment,
                 R.id.notificationsFragment,
                 R.id.menuFragment
@@ -88,17 +89,14 @@ class ParentActivity : AppCompatActivity() {
 
         var parentService = RetrofitHelper.getInstance().create(ParentService::class.java)
         var userService = RetrofitHelper.getInstance().create(UserService::class.java)
+        var notificationService = RetrofitHelper.getInstance().create(NotificationService::class.java)
+        var locationService = RetrofitHelper.getInstance().create(LocationService::class.java)
         var userRepository = UserRepository(userService)
         var parentRepository = ParentRepository(parentService)
-        mainViewModel = ViewModelProvider(this,MainViewModelFactory(userRepository,parentRepository,this)).get(MainViewModel::class.java)
+        var notificationRepository = NotificationRepository(notificationService)
+        var locationRepository = LocationRepository(locationService)
+        mainViewModel = ViewModelProvider(this,MainViewModelFactory(userRepository,parentRepository,notificationRepository,locationRepository,this)).get(MainViewModel::class.java)
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.options_menu,menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
-    }
 }

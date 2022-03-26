@@ -19,8 +19,8 @@ class AuthenticationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
         initDataMembers()
-        storeFCMToken()
-        checkSessionAndNavigate()
+     //   storeFCMToken()
+      //  checkSessionAndNavigate()
 
     }
 

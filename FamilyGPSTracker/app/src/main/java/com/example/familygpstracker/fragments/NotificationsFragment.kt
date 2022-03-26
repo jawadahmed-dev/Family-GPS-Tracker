@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familygpstracker.R
+import com.example.familygpstracker.activities.ParentActivity
 import com.example.familygpstracker.adapter.NotificationListAdapter
 import com.example.familygpstracker.apis.NotificationService
 import com.example.familygpstracker.apis.RetrofitHelper
@@ -23,7 +24,7 @@ import com.example.familygpstracker.viewmodels.NotificationViewModelFactory
 class NotificationsFragment : Fragment() {
 
     private lateinit var binding: FragmentNotificationsBinding
-    private lateinit var notificationViewModel: NotificationViewModel
+    private lateinit var viewModel: MainViewModel
     private lateinit var notificationListAdapter: NotificationListAdapter
 
 
@@ -43,7 +44,7 @@ class NotificationsFragment : Fragment() {
     }
 
     private fun registerListeners() {
-        notificationViewModel.notificationList.observe(requireActivity()  , {
+        viewModel.notificationList.observe(requireActivity()  , {
             notificationListAdapter.setNotifications(it)
         }  )
     }
@@ -66,11 +67,12 @@ class NotificationsFragment : Fragment() {
     }
 
     private fun initViewModel() {
-        var notificationService = RetrofitHelper.getInstance().create(NotificationService::class.java)
-        var notificationRepository = NotificationRepository(notificationService)
-        notificationViewModel = ViewModelProvider(requireActivity(),
-            NotificationViewModelFactory(notificationRepository)
-        ).get(NotificationViewModel::class.java)
+        /*var notificationService = RetrofitHelper.getInstance().create(NotificationService::class.java)
+        var notificationRepository = NotificationRepository(notificationService)*/
+        viewModel = (requireActivity() as ParentActivity).mainViewModel
+        /*ViewModelProvider(requireActivity(),
+        NotificationViewModelFactory(notificationRepository)
+    ).get(NotificationViewModel::class.java)*/
     }
 
 }

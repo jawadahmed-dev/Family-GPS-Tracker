@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitHelper {
-    val BASE_URL = "http://192.168.10.4:8070/"
+    val BASE_URL = "http://192.168.10.2:8070/"
     fun getInstance() : Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)

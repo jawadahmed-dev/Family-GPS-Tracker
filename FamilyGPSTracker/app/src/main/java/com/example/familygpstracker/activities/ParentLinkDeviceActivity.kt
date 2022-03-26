@@ -4,15 +4,16 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.familygpstracker.R
-import com.example.familygpstracker.apis.ParentService
-import com.example.familygpstracker.apis.RetrofitHelper
-import com.example.familygpstracker.apis.UserService
+import com.example.familygpstracker.apis.*
 import com.example.familygpstracker.databinding.ActivityParentLinkDeviceBinding
+import com.example.familygpstracker.repositories.LocationRepository
+import com.example.familygpstracker.repositories.NotificationRepository
 import com.example.familygpstracker.repositories.ParentRepository
 import com.example.familygpstracker.repositories.UserRepository
 import com.example.familygpstracker.utility.SessionManager
@@ -40,6 +41,7 @@ class ParentLinkDeviceActivity : AppCompatActivity() {
 
 
         mainViewModel.parentDetail.observe(this, {
+            binding.progressBar.visibility = View.INVISIBLE
             if(!hasParentHaveNoChild()){
                 startActivity(Intent(this,ParentActivity::class.java))
                 finish()
@@ -98,11 +100,13 @@ class ParentLinkDeviceActivity : AppCompatActivity() {
 
         var parentService = RetrofitHelper.getInstance().create(ParentService::class.java)
         var userService = RetrofitHelper.getInstance().create(UserService::class.java)
+        var notificationService = RetrofitHelper.getInstance().create(NotificationService::class.java)
+        var locationService = RetrofitHelper.getInstance().create(LocationService::class.java)
         var userRepository = UserRepository(userService)
         var parentRepository = ParentRepository(parentService)
-        mainViewModel = ViewModelProvider(this,
-            MainViewModelFactory(userRepository,parentRepository,this)
-        ).get(MainViewModel::class.java)
+        var notificationRepository = NotificationRepository(notificationService)
+        var locationRepository = LocationRepository(locationService)
+        mainViewModel = ViewModelProvider(this,MainViewModelFactory(userRepository,parentRepository,notificationRepository,locationRepository,this)).get(MainViewModel::class.java)
 
     }
     fun changeStatusBarColor() {

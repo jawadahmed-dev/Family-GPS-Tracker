@@ -50,7 +50,7 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         changeStatusBarColor()
         registerListeners()
-
+        showSuccessMessage()
         Toast.makeText(requireActivity(),args.userType, Toast.LENGTH_LONG).show()
     }
 

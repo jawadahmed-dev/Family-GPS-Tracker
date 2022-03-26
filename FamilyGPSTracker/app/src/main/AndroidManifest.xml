@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.familygpstracker" >
+    package="com.example.familygpstracker">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -13,7 +13,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FamilyGPSTracker"
-        android:usesCleartextTraffic="true" >
+        android:usesCleartextTraffic="true">
+
+        <service
+            android:name=".services.MyBackgroundLocationService"
+            android:stopWithTask="false"
+            android:enabled="true"
+            android:exported="false"></service>
+
+        <receiver android:name=".broadcastreceiver.RestartServiceReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="YouWillNeverKillMe" >
+                </action>
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".activities.ChildLinkDeviceActivity"
@@ -24,20 +38,19 @@
         </activity>
         <activity
             android:name=".activities.ParentLinkDeviceActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.ChildActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-            </intent-filter>
 
+            </intent-filter>
         </activity>
 
         <meta-data
@@ -46,24 +59,26 @@
 
         <service
             android:name=".services.MyFirebaseMessagingService"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
+
+
         <activity
             android:name=".activities.AuthenticationActivity"
-            android:exported="true" >
+            android:exported="true"
+            android:theme="@style/AppTheme">
             <intent-filter>
-
                 <action android:name="android.intent.action.MAIN" />
+
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.ParentActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

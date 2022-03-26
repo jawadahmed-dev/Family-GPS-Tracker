@@ -4,25 +4,38 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.familygpstracker.models.Location
+import com.example.familygpstracker.models.Notification
 import com.example.familygpstracker.models.ParentDetail
 import com.example.familygpstracker.models.User
+import com.example.familygpstracker.repositories.LocationRepository
+import com.example.familygpstracker.repositories.NotificationRepository
 import com.example.familygpstracker.repositories.ParentRepository
 import com.example.familygpstracker.repositories.UserRepository
 import com.example.familygpstracker.utility.SessionManager
+import com.example.familygpstracker.utility.SharedPrefUtility
 import kotlinx.coroutines.launch
 
 class MainViewModel (
     private val userRepository: UserRepository ,
     private val parentRepository: ParentRepository ,
+    private val notificationRepository: NotificationRepository,
+    private val locationRepository: LocationRepository,
     private val context: Context
     ) : ViewModel(){
 
-    private lateinit var sessionManager : SessionManager
+    private var sessionManager : SessionManager
+    private var sharedPrefUtility: SharedPrefUtility
     init {
         sessionManager = SessionManager(context)
+        sharedPrefUtility = SharedPrefUtility(context)
+
         viewModelScope.launch {
+
             userRepository.getUser("jawad@gmail.com")
             parentRepository.getParentDetails("B91DB7C9-4032-4847-91D3-9491789AF1F0")
+            notificationRepository.getAllNotifications()
+            locationRepository.getLastLocation("2C1852C3-07F6-4976-98AA-38DFF2C550CF")
         }
     }
 
@@ -31,4 +44,12 @@ class MainViewModel (
 
     val parentDetail : LiveData<ParentDetail>
         get() = parentRepository.parentDetail
+
+    val notificationList: LiveData<List<Notification>>
+        get() = notificationRepository.notifications
+
+    val location:LiveData<Location>
+    get() = locationRepository.location
+
+    suspend fun getLastLocation() = locationRepository.getLastLocation("2C1852C3-07F6-4976-98AA-38DFF2C550CF")
 }
