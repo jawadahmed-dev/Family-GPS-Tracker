@@ -1,5 +1,7 @@
 package com.example.familygpstracker.fragments
 
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
@@ -16,13 +18,13 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import android.os.HandlerThread
+import android.util.Log
 import com.example.familygpstracker.activities.ParentActivity
 import com.example.familygpstracker.viewmodels.MainViewModel
 import kotlinx.coroutines.*
 import com.google.android.gms.maps.model.Marker
-
-
-
+import java.util.*
+import kotlin.math.log
 
 
 class LiveTrackFragment : Fragment() , OnMapReadyCallback {
@@ -31,7 +33,7 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
     private lateinit var mHandlerThread: HandlerThread
     private lateinit var map : SupportMapFragment
     private lateinit var googleMap: GoogleMap
-    private var isMapActive = true
+    private var isMapActive = false
     private lateinit var mainViewModel: MainViewModel
     private lateinit var binding: FragmentLiveTrackBinding
 
@@ -49,8 +51,6 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
         initDataMember()
         syncMap()
-        registerObserver()
-        startUpdatingMap(4000L)
 
     }
 
@@ -60,17 +60,25 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
 
 
     private fun registerObserver() {
+
         mainViewModel.location.observe(requireActivity(),{
             var latLang = LatLng(it.latitude.toDouble(),it.longitude.toDouble())
-            moveMarker(latLang)
-            goToLocation(latLang)
+
+            if(getActivity() != null){
+                moveMarker(latLang)
+                goToLocation(latLang)
+            }
+
 
         })
     }
 
     private fun moveMarker(latLang: LatLng) {
 
-        val marker: Marker? = googleMap.addMarker(MarkerOptions().position(latLang).title("Rawalpindi C-Block"))
+         val geocoder = Geocoder(requireActivity(), Locale.getDefault())
+        var address = geocoder.getFromLocation(latLang.latitude,latLang.longitude,3).get(2)
+        val marker: Marker? = googleMap.addMarker(MarkerOptions().position(latLang).title(
+            address.getAddressLine(address.maxAddressLineIndex)))
         marker?.showInfoWindow()
     }
 
@@ -89,7 +97,8 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
 
 
     private fun startUpdatingMap(timeInterval: Long): Job {
-        return CoroutineScope(Dispatchers.Default).launch {
+        isMapActive = true
+        return CoroutineScope(Dispatchers.IO).launch {
             while (isMapActive) {
                 // add your task here
                 delay(timeInterval)
@@ -105,8 +114,45 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
 
     override fun onMapReady(p0: GoogleMap) {
         googleMap = p0
+        googleMap.uiSettings.isCompassEnabled = true
+        googleMap.uiSettings.isZoomControlsEnabled = true
+        googleMap.uiSettings.isMyLocationButtonEnabled =true
+        googleMap.uiSettings.isMapToolbarEnabled = true
+        googleMap.uiSettings.isIndoorLevelPickerEnabled = true
+        googleMap.uiSettings.isMapToolbarEnabled = true
         var rawalpindiCBlock: LatLng = LatLng(33.632687, 73.076726)
         p0.addMarker(MarkerOptions().position(rawalpindiCBlock).title("Rawalpindi C-Block"))
         p0.moveCamera(CameraUpdateFactory.newLatLng(rawalpindiCBlock))
+        registerObserver()
+        startUpdatingMap(4000L)
     }
+
+    override fun onPause() {
+        isMapActive = false
+        super.onPause()
+    }
+
+    override fun onStop() {
+
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+
+        super.onDestroy()
+    }
+
+    override fun onResume() {
+        startUpdatingMap(4000L)
+        super.onResume()
+    }
+
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
 }

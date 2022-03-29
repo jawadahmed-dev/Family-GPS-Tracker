@@ -23,17 +23,17 @@ class MenuFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        (activity as AppCompatActivity?)!!.getWindow().setStatusBarColor(ContextCompat.getColor(requireActivity(),
+        /*(activity as AppCompatActivity?)!!.getWindow().setStatusBarColor(ContextCompat.getColor(requireActivity(),
             R.color.light_blue
         ))
-        (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
+        (activity as AppCompatActivity?)!!.supportActionBar!!.hide()*/
     }
 
     override fun onStop() {
         super.onStop()
-        (activity as AppCompatActivity?)!!.getWindow().setStatusBarColor(ContextCompat.getColor(requireActivity(),
+        /*(activity as AppCompatActivity?)!!.getWindow().setStatusBarColor(ContextCompat.getColor(requireActivity(),
             R.color.light_cyan
         ))
-        (activity as AppCompatActivity?)!!.supportActionBar!!.show()
+        (activity as AppCompatActivity?)!!.supportActionBar!!.show()*/
     }
 }

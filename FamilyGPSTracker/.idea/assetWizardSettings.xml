@@ -111,6 +111,12 @@
                                       </entry>
                                     </map>
                                   </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="3bcaed" />
+                                    </map>
+                                  </option>
                                 </PersistentState>
                               </value>
                             </entry>
@@ -302,7 +308,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/clear/baseline_clear_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/feedback/baseline_feedback_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -312,8 +318,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="f2f2f2" />
-                            <entry key="outputName" value="ic_baseline_clear_24" />
+                            <entry key="color" value="68bbdc" />
+                            <entry key="outputName" value="ic_baseline_feedback_24" />
                             <entry key="sourceFile" value="C:\Users\Admin\AndroidStudioProjects\FamilyGPSTracker" />
                           </map>
                         </option>

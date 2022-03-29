@@ -17,6 +17,9 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
+import com.example.familygpstracker.apis.LocationService
+import com.example.familygpstracker.apis.RetrofitHelper
+import com.example.familygpstracker.models.LocationDto
 import com.example.familygpstracker.utility.LocationUtility
 import com.example.familygpstracker.utility.NetworkUtils
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -33,22 +36,27 @@ class LocationWorker (private val context:Context , params : WorkerParameters)
     override fun doWork(): Result {
 
         initDataMembers()
+        var locationService = RetrofitHelper.getInstance().create(LocationService::class.java)
         CoroutineScope(Dispatchers.IO).launch {
             for (i in 1..450){
-                if(NetworkUtils.isNetworkAvailable(context) == false) {
+               /* if(NetworkUtils.isNetworkAvailable(context) == false) {
                     break
-                }
+                }*/
+                locationService.postLocation("2C1852C3-07F6-4976-98AA-38DFF2C550CF",
+                    LocationDto(12.322323,63.324234)
+                )
                 delay(2000)
+
                /* locationClient.lastLocation.addOnCompleteListener({
                 if(it.isSuccessful){
                     location = it.result
                 }
                     //Log.d("MyWorker", "doWork: ")
                 })*/
-                withContext(Dispatchers.Main){
+               /* withContext(Dispatchers.Main){
                     Toast.makeText(context,"hello",Toast.LENGTH_LONG)
                 }
-
+*/
                // checkLocationPermission()
             }
 

@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.ConnectivityManager
+import android.os.Build
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -60,17 +61,23 @@ class ChildActivity : AppCompatActivity() {
        // getLocation()
        // getLocationUpdate()
 
-        setUpWorker()
+       // setUpWorker()
 
-       /* var intent = Intent(this,MyBackgroundLocationService::class.java)
+        var intent = Intent(this,MyBackgroundLocationService::class.java)
         intent.putExtra("UserID", "123456");
-        startService(intent)*/
-     /*   val br: BroadcastReceiver = RestartServiceReceiver()
-        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION).apply {
-            addAction("YouWillNeverKillMe")
+        requestPermissionLocation()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if(checkLocationPermission()){
+                startForegroundService(intent)
+            }
+
         }
-        registerReceiver(br,filter)
-        sendBroadcast(Intent("YouWillNeverKillMe"));*/
+        /*   val br: BroadcastReceiver = RestartServiceReceiver()
+           val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION).apply {
+               addAction("YouWillNeverKillMe")
+           }
+           registerReceiver(br,filter)
+           sendBroadcast(Intent("YouWillNeverKillMe"));*/
 
 
        /* FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -91,6 +98,23 @@ class ChildActivity : AppCompatActivity() {
         binding.helpAlertBtn.setOnClickListener({
             sendNotification()
         })*/
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if(requestCode == 1011 && checkLocationPermission()){
+
+                var intent = Intent(this,MyBackgroundLocationService::class.java)
+                intent.putExtra("UserID", "123456");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
     }
 
     private fun getLocation() {
@@ -116,13 +140,8 @@ class ChildActivity : AppCompatActivity() {
     }
 
     private fun checkLocationPermission() : Boolean{
-        return  ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-
-
-        //
+        return ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     }
 
@@ -150,7 +169,7 @@ class ChildActivity : AppCompatActivity() {
 
     private fun requestPermissionLocation(){
         if(!checkLocationPermission()){
-            ActivityCompat.requestPermissions(this,arrayOf(Manifest.permission.ACCESS_FINE_LOCATION ,Manifest.permission.ACCESS_COARSE_LOCATION ),1011)
+            ActivityCompat.requestPermissions(this,arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION ,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION ),1011)
         }
     }
 

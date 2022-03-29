@@ -1,6 +1,7 @@
 package com.example.familygpstracker.viewmodels
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,7 @@ import com.example.familygpstracker.repositories.LocationRepository
 import com.example.familygpstracker.repositories.NotificationRepository
 import com.example.familygpstracker.repositories.ParentRepository
 import com.example.familygpstracker.repositories.UserRepository
+import com.example.familygpstracker.utility.NetworkUtils
 import com.example.familygpstracker.utility.SessionManager
 import com.example.familygpstracker.utility.SharedPrefUtility
 import kotlinx.coroutines.launch
@@ -32,10 +34,17 @@ class MainViewModel (
 
         viewModelScope.launch {
 
-            userRepository.getUser("jawad@gmail.com")
-            parentRepository.getParentDetails("B91DB7C9-4032-4847-91D3-9491789AF1F0")
-            notificationRepository.getAllNotifications()
-            locationRepository.getLastLocation("2C1852C3-07F6-4976-98AA-38DFF2C550CF")
+            if(NetworkUtils.haveNetworkConnection(context) ==true ){
+                userRepository.getUser("jawad@gmail.com")
+                parentRepository.getParentDetails("B91DB7C9-4032-4847-91D3-9491789AF1F0")
+                notificationRepository.getAllNotifications()
+                locationRepository.getLastLocation("2C1852C3-07F6-4976-98AA-38DFF2C550CF")
+                locationRepository.getLastTenLocations("2C1852C3-07F6-4976-98AA-38DFF2C550CF")
+            }
+            else{
+                Log.d("TAG", ": ")
+            }
+
         }
     }
 
@@ -51,5 +60,19 @@ class MainViewModel (
     val location:LiveData<Location>
     get() = locationRepository.location
 
-    suspend fun getLastLocation() = locationRepository.getLastLocation("2C1852C3-07F6-4976-98AA-38DFF2C550CF")
+    val lastTenLocations : LiveData<List<Location>>
+        get() = locationRepository.lastTenLocations
+
+    suspend fun getLastLocation() {
+        if(NetworkUtils.haveNetworkConnection(context)==true) {
+            locationRepository.getLastLocation("2C1852C3-07F6-4976-98AA-38DFF2C550CF")
+        }
+    }
+
+    suspend fun getLastTenLocations() {
+        if(NetworkUtils.haveNetworkConnection(context)==true) {
+            locationRepository.getLastTenLocations("2C1852C3-07F6-4976-98AA-38DFF2C550CF")
+        }
+    }
+
 }

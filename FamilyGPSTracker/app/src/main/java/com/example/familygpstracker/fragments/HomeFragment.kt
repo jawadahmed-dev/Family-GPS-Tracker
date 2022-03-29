@@ -35,20 +35,6 @@ class HomeFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_home,container,false)
 
-//        binding.viewPager.adapter=SectionPagerAdapter(requireActivity().supportFragmentManager,requireActivity().lifecycle)
-//        TabLayoutMediator(binding.tabLayout,binding.viewPager){tab,position ->
-//            when(position){
-//                0->{
-//                    tab.text="Real-time Location"
-//                }
-//                1->{
-//                    tab.text="Location History"
-//                }
-//                2->{
-//                    tab.text="Geofences"
-//                }
-//            }
-//        }.attach()
         return binding.root
     }
 
@@ -56,18 +42,15 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initDataMembers()
         setHasOptionsMenu(true);
-       // var map : SupportMapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-       // map.getMapAsync(this)
 
         // SetUp RecyclerView
-     /*   setUpRecyclerView()
+        setUpRecyclerView()
 
         // SetUp ViewPager
         setUpViewPager(view)
 
         // Register Observer
         registerObserver()
-*/
     }
 
     private fun registerObserver() {
@@ -93,7 +76,7 @@ class HomeFragment : Fragment() {
         var tabLayout=view.findViewById<TabLayout>(R.id.tabLayout)
         var viewPager=view.findViewById<ViewPager2>(R.id.viewPager)
 
-        viewPager.adapter = ViewPagerAdapter(requireActivity().supportFragmentManager,lifecycle)
+        viewPager.adapter = ViewPagerAdapter(childFragmentManager,lifecycle)
         TabLayoutMediator(tabLayout,viewPager){tab,pos ->
             when(pos){
                 0 -> tab.text="Live Tracking"
@@ -103,11 +86,6 @@ class HomeFragment : Fragment() {
         }.attach()
     }
 
-    /* override fun onMapReady(p0: GoogleMap) {
-         var rawalpindiCBlock: LatLng = LatLng(33.632687, 73.076726)
-         p0.addMarker(MarkerOptions().position(rawalpindiCBlock).title("Rawalpindi C-Block"))
-         p0.moveCamera(CameraUpdateFactory.newLatLng(rawalpindiCBlock))
-     }*/
 
     private fun setUpRecyclerView(){
         var list = ArrayList<String>(3);
@@ -130,4 +108,21 @@ class HomeFragment : Fragment() {
         requireActivity().finish()
         return true
     }
+
+    override fun onPause() {
+        super.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
 }
