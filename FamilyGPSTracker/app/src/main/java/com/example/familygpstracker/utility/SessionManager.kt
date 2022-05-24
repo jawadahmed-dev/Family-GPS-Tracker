@@ -68,11 +68,13 @@ class SessionManager(private val context: Context?) {
         // Storing id in pref
         editor?.putString(KEY_UserId, userId)
 
+
+
         // commit changes
         editor?.commit()
     }
 
-    fun createChildLoginSession( childId: String?, userType:String?, userId:String?) {
+    fun createChildLoginSession( childId: String?, userType:String?, userId:String?,parentId: String?) {
         // Storing login value as TRUE
         editor?.putBoolean(IS_LOGIN, true)
 
@@ -84,6 +86,9 @@ class SessionManager(private val context: Context?) {
 
         // Storing id in pref
         editor?.putString(KEY_UserId, userId)
+
+        // Storing id in pref
+        editor?.putString(KEY_CHILD_PARENT_ID, parentId)
 
         // commit changes
         editor?.commit()
@@ -127,7 +132,7 @@ class SessionManager(private val context: Context?) {
     }
 
     fun getDeviceToken(): String? {
-        return pref!!.getString(DEVICE_TOKEN, null)
+        return pref!!.getString(DEVICE_TOKEN, "null")
     }
 
     fun storeChildParentId(parentID:String){

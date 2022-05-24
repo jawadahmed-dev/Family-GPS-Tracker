@@ -16,7 +16,8 @@ class DecideUserFragment : Fragment() {
     private var userType:String? = null
     private lateinit var binding: FragmentDecideUserBinding
     private lateinit var directionToSignUpFragment :DecideUserFragmentDirections
-    /*  private val directionToEnterCodeFragment=DecideUserFragmentDirections.actionDecideUserFragmentToEnterCodeFragment()*/
+    private val directionToLoginFragment = DecideUserFragmentDirections.actionDecideUserFragmentToLoginFragment()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,6 +45,9 @@ class DecideUserFragment : Fragment() {
                 binding.familyManagerOption.isChecked = false
                 userType="Family Member"
             }
+        })
+        binding.backBtn.setOnClickListener({
+            findNavController().navigate(directionToLoginFragment)
         })
         binding.nextBtn.setOnClickListener({view ->
             if(userType!=null){

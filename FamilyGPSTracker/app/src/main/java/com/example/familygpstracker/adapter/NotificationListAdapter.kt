@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.familygpstracker.R
-import com.example.familygpstracker.databinding.ItemFamilyMemberBinding
 import com.example.familygpstracker.databinding.ItemNotificationBinding
 import com.example.familygpstracker.models.Notification
 
@@ -23,6 +22,7 @@ class NotificationListAdapter(private var notificationList : List<Notification>,
     }
 
     override fun onBindViewHolder(holder: NotificationHolder, position: Int) {
+        holder.binding.notificationTitle.text = notificationList[position].title
         holder.binding.notificationMessage.text = notificationList[position].message
         holder.binding.createdDate.text = notificationList[position].createdAt
     }

@@ -3,8 +3,6 @@ package com.example.familygpstracker.fragments
 import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
@@ -18,9 +16,9 @@ import androidx.navigation.fragment.navArgs
 import com.example.familygpstracker.R
 import com.example.familygpstracker.apis.ParentService
 import com.example.familygpstracker.apis.RetrofitHelper
-import com.example.familygpstracker.apis.UserService
 import com.example.familygpstracker.databinding.FragmentSignUpBinding
 import com.example.familygpstracker.models.RegisterParent
+import com.example.familygpstracker.utility.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -30,6 +28,7 @@ import kotlinx.coroutines.withContext
 class SignUpFragment : Fragment() {
 
     private val directionToSignUpFragment = SignUpFragmentDirections.actionSignUpFragmentToDecideUserFragment()
+
     private val args : SignUpFragmentArgs by navArgs()
     private var isUserNameValid = false
     private var isEmailValid = false
@@ -50,8 +49,7 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         changeStatusBarColor()
         registerListeners()
-        showSuccessMessage()
-        Toast.makeText(requireActivity(),args.userType, Toast.LENGTH_LONG).show()
+       // Toast.makeText(requireActivity(),args.userType, Toast.LENGTH_LONG).show()
     }
 
     private fun changeStatusBarColor() {
@@ -99,37 +97,57 @@ class SignUpFragment : Fragment() {
 
         if (isFormValid) {
 
+
             var payload = makePayLoad()
 
-            var retrofit = RetrofitHelper.getInstance()
+            var retrofit = RetrofitHelper.buildRetrofit()
 
             var parentService = retrofit.create(ParentService::class.java)
+            if (NetworkUtils.haveNetworkConnection(requireActivity())) {
+                GlobalScope.launch {
 
-            GlobalScope.launch {
+                    try{
+                        var result = parentService.registerParent(payload)
 
-                var result = parentService.registerParent(payload)
+                        binding.progressBar.visibility = View.INVISIBLE
 
-                binding.progressBar.visibility = View.INVISIBLE
+                        if (result != null && result.code() == 201) {
 
-                if (result != null && result.code() == 200) {
+                            result.errorBody()
 
-                    result.errorBody()
+                            withContext(Dispatchers.Main) {
+                                showSuccessMessage()
+                            }
+                        } else {
+                            Log.d("Error", "" + result.errorBody())
+                            withContext(Dispatchers.Main) {
+                                showFailureMessage()
+                            }
+                        }
 
-                    withContext(Dispatchers.Main) {
-                        showSuccessMessage()
+                    }catch(e:Exception){
+                        Toast.makeText(
+                            requireActivity(), "Failed to Connect to Network!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        binding.progressBar.visibility = View.INVISIBLE
                     }
-                }
-                else {
-                    Log.d("Error", "" + result.errorBody())
-                    withContext(Dispatchers.Main) {
-                        showFailureMessage()
-                    }
+
                 }
 
             }
+            else {
+                Toast.makeText(
+                    requireActivity(), "No Internet Available!",
+                    Toast.LENGTH_LONG
+                ).show()
+                binding.progressBar.visibility = View.INVISIBLE
+            }
         }
 
-        binding.progressBar.visibility = View.INVISIBLE
+
+
+
     }
 
     private fun showSuccessMessage() {
@@ -268,7 +286,7 @@ class SignUpFragment : Fragment() {
 
     private fun validateEmail(): String? {
 
-        var email=binding.email.text.toString()
+        var email=binding.email.text.toString().trim()
 
         if(!email.isEmpty()) {
 

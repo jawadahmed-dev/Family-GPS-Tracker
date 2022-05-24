@@ -7,11 +7,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.familygpstracker.R
-import com.example.familygpstracker.databinding.ItemFamilyMemberBinding
 import com.example.familygpstracker.databinding.ItemLocationHistoryBinding
-import com.example.familygpstracker.databinding.ItemNotificationBinding
 import com.example.familygpstracker.models.Location
-import com.example.familygpstracker.models.Notification
 import java.util.*
 
 class LocationHistoryListAdapter(private var locationList : List<Location>, private val context: Context

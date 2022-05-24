@@ -5,20 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.familygpstracker.R
 import com.example.familygpstracker.activities.ParentActivity
 import com.example.familygpstracker.adapter.NotificationListAdapter
-import com.example.familygpstracker.apis.NotificationService
-import com.example.familygpstracker.apis.RetrofitHelper
 import com.example.familygpstracker.databinding.FragmentNotificationsBinding
 import com.example.familygpstracker.models.Notification
-import com.example.familygpstracker.repositories.NotificationRepository
 import com.example.familygpstracker.viewmodels.MainViewModel
-import com.example.familygpstracker.viewmodels.MainViewModelFactory
-import com.example.familygpstracker.viewmodels.NotificationViewModel
-import com.example.familygpstracker.viewmodels.NotificationViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class NotificationsFragment : Fragment() {
@@ -44,9 +39,24 @@ class NotificationsFragment : Fragment() {
     }
 
     private fun registerListeners() {
+
         viewModel.notificationList.observe(requireActivity()  , {
             notificationListAdapter.setNotifications(it)
+            binding.swiperefresh.isRefreshing = false
         }  )
+
+        binding.swiperefresh.setOnRefreshListener({
+            if(viewModel.selectedChildId == null){
+                binding.swiperefresh.isRefreshing = false
+
+            }
+            else {
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.getALLNotifications()
+                }
+            }
+
+        })
     }
 
     private fun setUpRecyclerView() {

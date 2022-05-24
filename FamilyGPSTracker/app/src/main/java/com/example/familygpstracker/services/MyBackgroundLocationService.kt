@@ -1,17 +1,13 @@
 package com.example.familygpstracker.services
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import android.R
 import android.annotation.SuppressLint
 import android.app.*
 import android.util.Log
 import com.google.android.gms.location.*
-import android.os.SystemClock.elapsedRealtime
 
 import android.location.Location
 import android.os.*
@@ -22,20 +18,22 @@ import com.example.familygpstracker.utility.NetworkUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import android.os.Bundle
 import android.os.Looper
 
 import android.os.HandlerThread
+import com.example.familygpstracker.utility.SessionManager
 import java.lang.Exception
 
 
 class MyBackgroundLocationService : Service() {
     lateinit var locationClient : FusedLocationProviderClient
     lateinit var locationCallback: LocationCallback
+    lateinit var sessionManager: SessionManager
 
 
     override fun onCreate() {
         super.onCreate()
+        sessionManager = SessionManager(this)
         locationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
         locationCallback =   object : LocationCallback(){
             override fun onLocationResult(p0: LocationResult) {
@@ -45,11 +43,11 @@ class MyBackgroundLocationService : Service() {
                     /*  Toast.makeText(applicationContext,"Location " + p0.lastLocation.latitude.toString(),
                           Toast.LENGTH_LONG).show()*/
                     var location : Location = p0.lastLocation
-                    var locationService = RetrofitHelper.getInstance().create(LocationService::class.java)
+                    var locationService = RetrofitHelper.buildRetrofit().create(LocationService::class.java)
                     CoroutineScope(Dispatchers.IO).launch {
                         if(NetworkUtils.isNetworkAvailable(this@MyBackgroundLocationService) == true){
                             try{
-                                locationService.postLocation("2C1852C3-07F6-4976-98AA-38DFF2C550CF",LocationDto(location.latitude,location.longitude))
+                                locationService.postLocation(sessionManager.getChildId().toString(),LocationDto(location.latitude,location.longitude))
                             }
                             catch(exception : Exception){
 

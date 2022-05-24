@@ -17,14 +17,14 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import android.content.Intent
-import android.widget.Switch
-import com.example.familygpstracker.activities.ChildLinkDeviceActivity
-import com.example.familygpstracker.activities.ParentActivity
+import com.example.familygpstracker.activities.ChildActivity
 import com.example.familygpstracker.activities.ParentLinkDeviceActivity
 import com.example.familygpstracker.models.User
+import com.example.familygpstracker.utility.NetworkUtils
 import com.example.familygpstracker.utility.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.net.SocketTimeoutException
 
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -90,37 +90,61 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun  verifyCredentials(){
 
-        var retrofit = RetrofitHelper.getInstance()
+        var retrofit = RetrofitHelper.buildRetrofit()
         var userService = retrofit.create(UserService::class.java)
 
-        GlobalScope.launch {
 
-            var result = userService.getUser(binding.email.text.toString())
-            binding.progressBar.visibility = View.INVISIBLE
-            if(result!=null && result.code() == 200){
 
-                var user = result.body()
+            if(NetworkUtils.haveNetworkConnection(requireActivity())){
+                GlobalScope.launch {
 
-                if(user?.parent != null && user?.parent?.password == binding.password.text.toString()){
-                    createLoginSession(user)
-                    navigateToNext(user?.userType)
-                }
-                else if(user?.child != null && user?.child?.password == binding.password.text.toString()) {
-                    createLoginSession(user)
-                    navigateToNext(user?.userType)
+                    try {
+                    var result = userService.getUser(binding.email.text.toString())
+                    binding.progressBar.visibility = View.INVISIBLE
+                    if (result != null && result.code() == 200) {
+
+                        var user = result.body()
+
+                        if (user?.parent != null && user?.parent?.password == binding.password.text.toString()) {
+                            createLoginSession(user)
+                            navigateToNext(user?.userType)
+                        } else if (user?.child != null && user?.child?.password == binding.password.text.toString()) {
+                            createLoginSession(user)
+                            navigateToNext(user?.userType)
+                        }
+                    }
+                    else {
+                        withContext(Dispatchers.Main){
+                            Toast.makeText(
+                                requireActivity(), "Email & Pass not correct!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                    }
+                    catch (e : SocketTimeoutException){
+                        withContext(Dispatchers.Main){
+                            Toast.makeText(
+                                requireActivity(), "Failed to Connect to Network!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            disableProgressBar()
+                        }
+
+                    }
+
                 }
 
             }
             else {
-                withContext(Dispatchers.Main){
-                    Toast.makeText(
-                        requireActivity(), "Email & Pass not correct!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+                Toast.makeText(
+                    requireActivity(), "No Internet Available!",
+                    Toast.LENGTH_LONG
+                ).show()
+                disableProgressBar()
             }
 
-        }
+
 
     }
 
@@ -131,7 +155,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         when(user.userType){
             "parent" -> SessionManager(requireActivity()).createParentLoginSession(user.parent?.parentId,user.userType,user.userId)
-            "child" ->  SessionManager(requireActivity()).createChildLoginSession(user.child?.childId,user.userType,user.userId)
+            "child" ->  SessionManager(requireActivity()).createChildLoginSession(user.child?.childId,user.userType,user.userId,user.child?.parentId)
         }
 
     }
@@ -143,7 +167,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 requireActivity().finish()
             }
             "child" -> {
-                requireActivity().startActivity(Intent(requireActivity(), ChildLinkDeviceActivity::class.java))
+                requireActivity().startActivity(Intent(requireActivity(), ChildActivity::class.java))
                 requireActivity().finish()
             }
         }
@@ -163,19 +187,26 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     }
 
+
+
     private fun validateEmail(): String? {
 
-        var email=binding.email.text.toString()
+        var email=binding.email.text.toString().trim()
 
         if(!email.isEmpty()) {
+
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 return "invalid email address"
             }
+
         }
         else {
+
             return "required"
+
         }
         return null
+
     }
     private fun validatePassword(): String? {
         var password = binding.password.text.toString()
@@ -187,7 +218,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 return "Must contain 1 Upper-case Character"
             }
             if (!password.matches(".*[a-z].*".toRegex())) {
-                return "Must contain 1 Upper-case Character"
+                return "Must contain 1 Lower-case Character"
             }
             if (!password.matches(".*[@#\$%^&+=].*".toRegex())) {
                 return "Must contain 1 Special Character"

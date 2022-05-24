@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -12,13 +13,12 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.familygpstracker.R
 import com.example.familygpstracker.apis.*
 import com.example.familygpstracker.databinding.ActivityParentLinkDeviceBinding
-import com.example.familygpstracker.repositories.LocationRepository
-import com.example.familygpstracker.repositories.NotificationRepository
-import com.example.familygpstracker.repositories.ParentRepository
-import com.example.familygpstracker.repositories.UserRepository
+import com.example.familygpstracker.repositories.*
 import com.example.familygpstracker.utility.SessionManager
 import com.example.familygpstracker.viewmodels.MainViewModel
 import com.example.familygpstracker.viewmodels.MainViewModelFactory
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -36,13 +36,15 @@ class ParentLinkDeviceActivity : AppCompatActivity() {
 
         initDataMembers()
         changeStatusBarColor()
-        updateDeviceToken()
+        var key = intent.getIntExtra("key",1)
+        //updateDeviceToken()
+       // storeFCMToken()
         setUpViewModel()
 
 
         mainViewModel.parentDetail.observe(this, {
             binding.progressBar.visibility = View.INVISIBLE
-            if(!hasParentHaveNoChild()){
+            if(hasParentHaveChild() && key == 1){
                 startActivity(Intent(this,ParentActivity::class.java))
                 finish()
             }
@@ -55,8 +57,24 @@ class ParentLinkDeviceActivity : AppCompatActivity() {
 
     }
 
+   /* private fun storeFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("Token", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            Log.d("MyToken", token)
+            // store token in shared prefferences
+            SessionManager(this).storeToken(token)
+        })
+    }*/
+
     private fun updateDeviceToken() {
-        var parentService = RetrofitHelper.getInstance().create(ParentService::class.java)
+        var parentService = RetrofitHelper.buildRetrofit().create(ParentService::class.java)
         GlobalScope.launch {
             var result = parentService.updateDeviceToken(sessionManager.getParentId().toString(),
                 sessionManager.getDeviceToken().toString())
@@ -88,25 +106,27 @@ class ParentLinkDeviceActivity : AppCompatActivity() {
     }
 
 
-    private fun hasParentHaveNoChild(): Boolean {
+    private fun hasParentHaveChild(): Boolean {
         var parentDetail = mainViewModel.parentDetail.value
         if(parentDetail?.children?.size == 0){
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     private fun setUpViewModel() {
 
-        var parentService = RetrofitHelper.getInstance().create(ParentService::class.java)
-        var userService = RetrofitHelper.getInstance().create(UserService::class.java)
-        var notificationService = RetrofitHelper.getInstance().create(NotificationService::class.java)
-        var locationService = RetrofitHelper.getInstance().create(LocationService::class.java)
+        var parentService = RetrofitHelper.buildRetrofit().create(ParentService::class.java)
+        var userService = RetrofitHelper.buildRetrofit().create(UserService::class.java)
+        var notificationService = RetrofitHelper.buildRetrofit().create(NotificationService::class.java)
+        var locationService = RetrofitHelper.buildRetrofit().create(LocationService::class.java)
+        var geofenceService = RetrofitHelper.buildRetrofit().create(GeofenceService::class.java)
         var userRepository = UserRepository(userService)
         var parentRepository = ParentRepository(parentService)
         var notificationRepository = NotificationRepository(notificationService)
         var locationRepository = LocationRepository(locationService)
-        mainViewModel = ViewModelProvider(this,MainViewModelFactory(userRepository,parentRepository,notificationRepository,locationRepository,this)).get(MainViewModel::class.java)
+        var geofenceRepository = GeofenceRepository(geofenceService)
+        mainViewModel = ViewModelProvider(this,MainViewModelFactory(userRepository,parentRepository,notificationRepository,locationRepository,geofenceRepository,this)).get(MainViewModel::class.java)
 
     }
     fun changeStatusBarColor() {

@@ -1,27 +1,14 @@
 package com.example.familygpstracker.worker
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Location
-import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import androidx.core.content.ContextCompat.getSystemService
 
-import android.net.ConnectivityManager
-import android.net.Network
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.core.content.ContextCompat
 import com.example.familygpstracker.apis.LocationService
 import com.example.familygpstracker.apis.RetrofitHelper
 import com.example.familygpstracker.models.LocationDto
-import com.example.familygpstracker.utility.LocationUtility
-import com.example.familygpstracker.utility.NetworkUtils
 import com.google.android.gms.location.FusedLocationProviderClient
 import kotlinx.coroutines.*
 
@@ -36,7 +23,7 @@ class LocationWorker (private val context:Context , params : WorkerParameters)
     override fun doWork(): Result {
 
         initDataMembers()
-        var locationService = RetrofitHelper.getInstance().create(LocationService::class.java)
+        var locationService = RetrofitHelper.buildRetrofit().create(LocationService::class.java)
         CoroutineScope(Dispatchers.IO).launch {
             for (i in 1..450){
                /* if(NetworkUtils.isNetworkAvailable(context) == false) {

@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.familygpstracker.apis.LocationService
 import com.example.familygpstracker.models.Location
-import com.example.familygpstracker.models.Notification
 
 class LocationRepository (private val locationService: LocationService) {
     private var locationLiveData = MutableLiveData<Location>()

@@ -13,9 +13,7 @@ import com.example.familygpstracker.R
 import com.example.familygpstracker.activities.ParentActivity
 import com.example.familygpstracker.apis.ChildService
 import com.example.familygpstracker.apis.RetrofitHelper
-import com.example.familygpstracker.apis.UserService
 import com.example.familygpstracker.databinding.FragmentEnterCodeBinding
-import com.example.familygpstracker.databinding.FragmentSignUpBinding
 import com.example.familygpstracker.models.PairingCode
 import com.example.familygpstracker.utility.SessionManager
 import kotlinx.coroutines.GlobalScope
@@ -53,7 +51,7 @@ class EnterCodeFragment : Fragment() {
             var parentId = sessionManager.getParentId()
             var pairingCode = binding.pairingCodeText.text.toString()
             if(pairingCode != null){
-                var retrofit = RetrofitHelper.getInstance()
+                var retrofit = RetrofitHelper.buildRetrofit()
                 var childService = retrofit.create(ChildService::class.java)
 
                 GlobalScope.launch {

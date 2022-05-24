@@ -8,11 +8,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familygpstracker.activities.ParentActivity
 import com.example.familygpstracker.adapter.LocationHistoryListAdapter
-import com.example.familygpstracker.adapter.NotificationListAdapter
 import com.example.familygpstracker.databinding.FragmentLocationHistoryBinding
 import com.example.familygpstracker.models.Location
-import com.example.familygpstracker.models.Notification
 import com.example.familygpstracker.viewmodels.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -52,9 +53,24 @@ class LocationHistoryFragment : Fragment() {
     }
 
     private fun registerListeners() {
+
         viewModel.lastTenLocations.observe(requireActivity()  , {
+            binding.swiperefresh.isRefreshing = false
             locationHistoryListAdapter.setLocations(it)
         }  )
+
+        binding.swiperefresh.setOnRefreshListener({
+            if(viewModel.selectedChildId.value == null){
+                binding.swiperefresh.isRefreshing = false
+
+            }
+            else {
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.getLastTenLocations(viewModel.selectedChildId.value!!)
+                }
+            }
+
+        })
     }
 
 

@@ -1,6 +1,8 @@
 package com.example.familygpstracker.fragments
 
-import android.location.Address
+import android.Manifest
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Geocoder
 import android.os.Bundle
 import android.os.Handler
@@ -19,12 +21,18 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import android.os.HandlerThread
 import android.util.Log
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import com.example.familygpstracker.activities.ParentActivity
+import com.example.familygpstracker.utility.GeofenceUtility
 import com.example.familygpstracker.viewmodels.MainViewModel
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.CircleOptions
 import kotlinx.coroutines.*
 import com.google.android.gms.maps.model.Marker
 import java.util.*
-import kotlin.math.log
 
 
 class LiveTrackFragment : Fragment() , OnMapReadyCallback {
@@ -36,6 +44,9 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
     private var isMapActive = false
     private lateinit var mainViewModel: MainViewModel
     private lateinit var binding: FragmentLiveTrackBinding
+    private lateinit var geofencingClient: GeofencingClient
+    private lateinit var geofencingUtility: GeofenceUtility
+    private val FINE_BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 1011
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,8 +61,23 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initDataMember()
+        registerListeners()
         syncMap()
+    }
 
+    private fun registerListeners() {
+        binding.swiperefresh.setOnRefreshListener({
+            if(mainViewModel.selectedChildId.value == null){
+                binding.swiperefresh.isRefreshing = false
+
+            }
+            else {
+                CoroutineScope(Dispatchers.IO).launch {
+                    mainViewModel.getGeofenceList(mainViewModel.selectedChildId.value!!)
+                }
+            }
+
+        })
     }
 
     private fun goToLocation(latLang: LatLng){
@@ -64,13 +90,34 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
         mainViewModel.location.observe(requireActivity(),{
             var latLang = LatLng(it.latitude.toDouble(),it.longitude.toDouble())
 
-            if(getActivity() != null){
+            if(getActivity() != null && googleMap!=null){
+                googleMap.clear();
                 moveMarker(latLang)
                 goToLocation(latLang)
             }
 
 
         })
+
+        mainViewModel.geofenceList.observe(requireActivity(),{
+            for(geofence in it){
+                var latLang = LatLng(geofence.latitude,geofence.longitude)
+                var radius = geofence.radius
+                addGeofence(latLang,radius)
+            }
+            binding.swiperefresh.isRefreshing = false
+        })
+        /*mainViewModel.lastIndex.observe(requireActivity(),{
+            if(it > -1){
+                isMapActive =false
+                if(googleMap!=null){
+                    startUpdatingMap(it,1500L)
+                }
+
+            }
+
+
+        })*/
     }
 
     private fun moveMarker(latLang: LatLng) {
@@ -92,20 +139,58 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
         mHandler = Handler(mHandlerThread.getLooper());
         mainViewModel = (requireActivity() as ParentActivity).mainViewModel
         map = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        geofencingClient = LocationServices.getGeofencingClient(requireActivity())
+        geofencingUtility = GeofenceUtility(requireActivity())
     }
 
+    private fun addGeofence(latLang: LatLng, radius: Double) : Unit{
+        var geofence = geofencingUtility.getGeofence("geofenceId", latLang, radius.toFloat(),
+        Geofence.GEOFENCE_TRANSITION_ENTER or
+        Geofence.GEOFENCE_TRANSITION_EXIT)
+        var geofencingRequest = geofencingUtility.getGeofencingRequest(geofence)
+        var pendingIntent = geofencingUtility.getPendingIntent()
+        if (!checkLocationPermission()) {
+            requestPermissionLocation()
+        }
+        geofencingClient.addGeofences(geofencingRequest,pendingIntent)
+            .addOnSuccessListener {
+                Log.d("Geofence", "geofenceSuccess : geofence added")
+                addCircle(latLang,radius)
+            }
+            .addOnFailureListener {
+               var errorMessage =  geofencingUtility.getErrorString(it)
+                Log.d("Geofence", "geofenceFailure : "+errorMessage)
+            }
+    }
 
+    private fun addCircle(latLng : LatLng, radius: Double) : Unit{
+        var circleOptions = CircleOptions()
+        circleOptions.center(latLng)
+        circleOptions.radius(radius)
+        circleOptions.strokeColor(Color.argb(255,255,0,0))
+        circleOptions.fillColor(Color.argb(64,255,0,0))
+        circleOptions.strokeWidth(4f)
+        googleMap.addCircle(circleOptions)
 
-    private fun startUpdatingMap(timeInterval: Long): Job {
+    }
+
+    private fun startUpdatingMap(timeInterval: Long): Job? {
         isMapActive = true
-        return CoroutineScope(Dispatchers.IO).launch {
-            while (isMapActive) {
-                // add your task here
-                delay(timeInterval)
-                mainViewModel.getLastLocation()
+        var position = mainViewModel.lastIndex.value
+        if(position!! > -1){
+            return CoroutineScope(Dispatchers.IO).launch {
+                while (isMapActive) {
+                    // add your task here
+                    delay(timeInterval)
+                    if(position > -1){
+                        mainViewModel.getLastLocation(mainViewModel.selectedChildId.toString())
+                    }
 
+                }
             }
         }
+        return null
+
     }
 
     companion object {
@@ -124,7 +209,34 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
         p0.addMarker(MarkerOptions().position(rawalpindiCBlock).title("Rawalpindi C-Block"))
         p0.moveCamera(CameraUpdateFactory.newLatLng(rawalpindiCBlock))
         registerObserver()
-        startUpdatingMap(4000L)
+        startUpdatingMap(1500L)
+
+    }
+
+    private fun requestPermissionLocation(){
+        if(!checkLocationPermission()){
+            ActivityCompat.requestPermissions(requireActivity(),arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION ,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION )
+                ,FINE_BACKGROUND_LOCATION_ACCESS_REQUEST_CODE)
+        }
+    }
+    private fun checkLocationPermission() : Boolean{
+        return ActivityCompat.checkSelfPermission(requireActivity(),
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if(requestCode == FINE_BACKGROUND_LOCATION_ACCESS_REQUEST_CODE && !checkLocationPermission()){
+
+          Toast.makeText(requireActivity(),"Background permission required!",Toast.LENGTH_LONG)
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
     }
 
     override fun onPause() {
@@ -143,7 +255,7 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
     }
 
     override fun onResume() {
-        startUpdatingMap(4000L)
+        startUpdatingMap(1500L)
         super.onResume()
     }
 

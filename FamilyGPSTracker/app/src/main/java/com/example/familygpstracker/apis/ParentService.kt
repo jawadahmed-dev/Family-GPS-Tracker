@@ -9,7 +9,7 @@ import retrofit2.http.*
 
 interface ParentService {
 
-    @POST("parent")
+    @POST("parent/register")
     suspend fun registerParent(
         @Body parent : RegisterParent
     ) : Response<Parent>
@@ -22,7 +22,7 @@ interface ParentService {
     @PUT("/parent/token/{id}")
     suspend fun updateDeviceToken(
         @Path("id") id : String,
-        @Body deviceToken:String
+        @Query("deviceTokenDto") deviceToken:String
     ) : Response<Parent>
 
 }

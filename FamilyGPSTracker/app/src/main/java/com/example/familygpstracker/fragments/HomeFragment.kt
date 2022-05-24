@@ -11,13 +11,10 @@ import com.example.familygpstracker.R
 import com.example.familygpstracker.activities.ParentActivity
 import com.example.familygpstracker.activities.ParentLinkDeviceActivity
 import com.example.familygpstracker.adapter.ChildListAdapter
-import com.example.familygpstracker.adapter.NotificationListAdapter
 import com.example.familygpstracker.adapter.ViewPagerAdapter
 import com.example.familygpstracker.databinding.FragmentHomeBinding
 import com.example.familygpstracker.models.Child
-import com.example.familygpstracker.models.Notification
 import com.example.familygpstracker.viewmodels.MainViewModel
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -57,11 +54,15 @@ class HomeFragment : Fragment() {
         viewModel.parentDetail.observe(requireActivity()  , {
             childListAdapter.setChildrens(it.children)
         }  )
+        /*viewModel.selectedChildInfo.observe(requireActivity(),{
+            childListAdapter.setLastIndex(it.get(1).toInt())
+        })*/
     }
 
     private fun initDataMembers() {
-        initChildListAdapter()
         initMainViewModel()
+        initChildListAdapter()
+
     }
 
     private fun initChildListAdapter() {
@@ -104,7 +105,9 @@ class HomeFragment : Fragment() {
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         super.onOptionsItemSelected(item)
-        startActivity(Intent(requireActivity(),ParentLinkDeviceActivity::class.java))
+        var intent = Intent(requireActivity(),ParentLinkDeviceActivity::class.java)
+        intent.putExtra("key",0)
+        startActivity(intent)
         requireActivity().finish()
         return true
     }

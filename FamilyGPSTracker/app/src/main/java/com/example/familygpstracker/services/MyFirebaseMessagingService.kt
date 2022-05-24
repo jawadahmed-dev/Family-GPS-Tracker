@@ -26,10 +26,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(p0: RemoteMessage) {
         super.onMessageReceived(p0)
         createNotificationChannel()
-        triggerNotification()
+        triggerNotification(p0)
     }
 
-    private fun triggerNotification() {
+    private fun triggerNotification(p0: RemoteMessage) {
         // Create an explicit intent for an Activity in your app
         val intent = Intent(this, ParentActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -38,8 +38,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val builder = NotificationCompat.Builder(this, getString(R.string.help_channel_id))
             .setSmallIcon(R.drawable.ic_app_logo)
-            .setContentTitle("My notification")
-            .setContentText("Hello World!")
+            .setContentTitle(p0.data.get("senderName"))
+            .setContentText(p0.data.get("body"))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             // Set the intent that will fire when the user taps the notification
             .setContentIntent(pendingIntent)

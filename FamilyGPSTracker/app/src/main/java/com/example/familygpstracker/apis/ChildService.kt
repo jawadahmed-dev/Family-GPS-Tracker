@@ -23,7 +23,7 @@ interface ChildService {
         @Body pairingCode: PairingCode,
     ) : Response<ChildDetail>
 
-    @POST("child/{id}}")
+    @GET("child/details/{id}")
     suspend fun getChildDetail(
         @Path("id") childId: String,
     ) : Response<ChildDetail>
