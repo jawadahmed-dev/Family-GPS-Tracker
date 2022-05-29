@@ -19,7 +19,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 class AuthenticationActivity : AppCompatActivity() {
 
     private lateinit var sessionManager : SessionManager
-    private lateinit var authViewModel : AuthenticationViewModel
+    lateinit var authViewModel : AuthenticationViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +27,6 @@ class AuthenticationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
         initDataMembers()
-
         storeFCMToken()
         checkSessionAndNavigate()
 
@@ -58,7 +57,7 @@ class AuthenticationActivity : AppCompatActivity() {
 
         if(sessionManager.isLoggedIn()){
             when(sessionManager.getUserType()){
-                "parent" -> startActivity(Intent(this,ParentLinkDeviceActivity::class.java))
+                "parent" -> startActivity(Intent(this,LinkDeviceActivity::class.java))
                 "child" -> startActivity(Intent(this,ChildActivity::class.java))
                  null -> return
             }

@@ -12,6 +12,7 @@ import com.example.familygpstracker.utility.NetworkUtils
 import com.example.familygpstracker.utility.SessionManager
 import com.example.familygpstracker.utility.SharedPrefUtility
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class AuthenticationViewModel (
     private val userRepository: UserRepository,
@@ -88,8 +89,12 @@ class AuthenticationViewModel (
     val selectedChildId : LiveData<String?>
         get() = selectedChildIdLiveData
 
-    val user : LiveData<User>
-        get() = userRepository.user
+    val userLoginResult : LiveData<Response<User>>
+        get() = userRepository.userLoginResult
+
+    suspend fun getUserLoginResult(userEmail : String) {
+        userRepository.getUserLoginResult(userEmail)
+    }
 
     val parentDetail : LiveData<ParentDetail>
         get() = parentRepository.parentDetail

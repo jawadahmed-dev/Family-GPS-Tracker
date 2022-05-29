@@ -13,10 +13,10 @@ class UserRepository (private val userService: UserService) {
     val userLoginResult : LiveData<Response<User>>
     get() = userLoginResultLiveData
 
-    suspend fun getUser(email:String){
+    suspend fun getUserLoginResult(email:String){
+
         var result = userService.getUserDetails(email)
-        if(result?.body() != null){
-            userLoginResultLiveData.postValue(result)
-        }
+        userLoginResultLiveData.postValue(result)
+
     }
 }

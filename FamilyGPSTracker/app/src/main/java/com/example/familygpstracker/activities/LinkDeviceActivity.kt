@@ -24,7 +24,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ParentLinkDeviceActivity : AppCompatActivity() {
+class LinkDeviceActivity : AppCompatActivity() {
 
     lateinit var sessionManager: SessionManager
     lateinit var mainViewModel: MainViewModel

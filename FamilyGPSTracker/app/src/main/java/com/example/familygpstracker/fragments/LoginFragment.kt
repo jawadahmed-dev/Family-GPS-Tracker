@@ -10,26 +10,27 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.familygpstracker.R
-import com.example.familygpstracker.apis.RetrofitHelper
-import com.example.familygpstracker.apis.UserService
 import com.example.familygpstracker.databinding.FragmentLoginBinding
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import android.content.Intent
+import com.example.familygpstracker.activities.AuthenticationActivity
 import com.example.familygpstracker.activities.ChildActivity
+import com.example.familygpstracker.activities.LinkDeviceActivity
 import com.example.familygpstracker.activities.ParentLinkDeviceActivity
 import com.example.familygpstracker.models.User
 import com.example.familygpstracker.utility.NetworkUtils
 import com.example.familygpstracker.utility.SessionManager
+import com.example.familygpstracker.viewmodels.AuthenticationViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.net.SocketTimeoutException
+import java.lang.Exception
 
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
-    private var auth=  FirebaseAuth.getInstance()
+
+    private lateinit var authViewModel : AuthenticationViewModel
     private var isEmailValid = false
     private var isPasswordValid = false
     private var isFormValid = false
@@ -48,7 +49,43 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         changeStatusBarColor()
-        registerListeners()
+        initDataMembers()
+        registerEventListeners()
+        registerObservers()
+    }
+
+    private fun registerObservers() {
+
+        authViewModel.userLoginResult.observe(requireActivity(),{
+
+            binding.progressBar.visibility = View.INVISIBLE
+            if (it.code() == 200) {
+
+                var user = it.body()
+
+                if (user?.parent?.password == binding.password.text.toString() || user?.child?.password == binding.password.text.toString()) {
+                    createLoginSession(user)
+                    navigateToNext(user?.userType)
+                }
+                else {
+                    Toast.makeText(
+                        requireActivity(), "Password is not correct!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+            else {
+                Toast.makeText(
+                    requireActivity(), "Email is not correct!",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+        })
+    }
+
+    private fun initDataMembers() {
+       authViewModel = (requireActivity() as AuthenticationActivity).authViewModel
     }
 
     private fun changeStatusBarColor() {
@@ -59,7 +96,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
     }
 
-    private fun registerListeners() {
+    private fun registerEventListeners() {
 
         binding.email.setOnFocusChangeListener{view,focused ->
             if(!focused){
@@ -82,23 +119,49 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
             enableProgressBar()
             reValidate()
-            if(isFormValid) verifyCredentials()
+            if(isFormValid) verifyCredentialsFromServer()
             else disableProgressBar()
 
         }
     }
 
-    private fun  verifyCredentials(){
+    private fun  verifyCredentialsFromServer(){
 
-        var retrofit = RetrofitHelper.buildRetrofit()
-        var userService = retrofit.create(UserService::class.java)
+       /* var retrofit = RetrofitHelper.buildRetrofit()
+        var userService = retrofit.create(UserService::class.java)*/
+        if(NetworkUtils.haveNetworkConnection(requireActivity())) {
 
+            Toast.makeText(
+                requireActivity(), "No Internet Available!",
+                Toast.LENGTH_LONG
+            ).show()
+            disableProgressBar()
+            return
+        }
 
+        GlobalScope.launch {
+
+                try {
+                    authViewModel.getUserLoginResult(binding.email.text.toString())
+                } catch (e: Exception) {
+
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            requireActivity(), "Failed to Connect to Network!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        disableProgressBar()
+                    }
+                }
+        }
+
+/*
 
             if(NetworkUtils.haveNetworkConnection(requireActivity())){
                 GlobalScope.launch {
 
                     try {
+
                     var result = userService.getUser(binding.email.text.toString())
                     binding.progressBar.visibility = View.INVISIBLE
                     if (result != null && result.code() == 200) {
@@ -144,6 +207,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 disableProgressBar()
             }
 
+*/
 
 
     }
@@ -163,7 +227,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private fun navigateToNext(userType:String){
         when(userType){
             "parent" -> {
-                requireActivity().startActivity(Intent(requireActivity(),ParentLinkDeviceActivity::class.java))
+                requireActivity().startActivity(Intent(requireActivity(), LinkDeviceActivity::class.java))
                 requireActivity().finish()
             }
             "child" -> {

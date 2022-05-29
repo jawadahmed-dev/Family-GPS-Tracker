@@ -21,6 +21,8 @@
         tools:layout="@layout/fragment_enter_code" >
         <action
             android:id="@+id/action_enterCodeFragment2_to_connectDeviceFragment"
-            app:destination="@id/connectDeviceFragment" />
+            app:destination="@id/connectDeviceFragment"
+            app:popUpTo="@id/connectDeviceFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

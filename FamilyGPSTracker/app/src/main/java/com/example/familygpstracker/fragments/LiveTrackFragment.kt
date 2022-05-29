@@ -134,9 +134,9 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
     }
 
     private fun initDataMember() {
-        mHandlerThread = HandlerThread("HandlerThread");
+      /*  mHandlerThread = HandlerThread("HandlerThread");
         mHandlerThread.start();
-        mHandler = Handler(mHandlerThread.getLooper());
+        mHandler = Handler(mHandlerThread.getLooper());*/
         mainViewModel = (requireActivity() as ParentActivity).mainViewModel
         map = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         geofencingClient = LocationServices.getGeofencingClient(requireActivity())
