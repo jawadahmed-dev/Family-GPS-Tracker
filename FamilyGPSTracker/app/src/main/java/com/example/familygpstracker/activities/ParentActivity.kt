@@ -53,7 +53,7 @@ class ParentActivity : AppCompatActivity() {
 
         //storeFCMToken()
 
-        updateDeviceToken()
+       // updateDeviceToken()
 
     }
 
@@ -80,8 +80,7 @@ class ParentActivity : AppCompatActivity() {
     }
 
     private fun LinkBottonNavWithNavController() {
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
         binding.bottomNavBar.setupWithNavController(navController!!)
 

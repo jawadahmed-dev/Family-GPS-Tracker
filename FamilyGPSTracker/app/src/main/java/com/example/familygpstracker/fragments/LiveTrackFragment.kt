@@ -39,13 +39,12 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
 
     private lateinit var mHandler: Handler
     private lateinit var mHandlerThread: HandlerThread
+    private lateinit var mRunnable: Runnable
     private lateinit var map : SupportMapFragment
     private lateinit var googleMap: GoogleMap
-    private var isMapActive = false
+    //private var isMapActive = false
     private lateinit var mainViewModel: MainViewModel
     private lateinit var binding: FragmentLiveTrackBinding
-    private lateinit var geofencingClient: GeofencingClient
-    private lateinit var geofencingUtility: GeofenceUtility
     private val FINE_BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 1011
 
     override fun onCreateView(
@@ -103,7 +102,8 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
             for(geofence in it){
                 var latLang = LatLng(geofence.latitude,geofence.longitude)
                 var radius = geofence.radius
-                addGeofence(latLang,radius)
+              //  addGeofence(latLang,radius)
+                addCircle(latLang,radius)
             }
             binding.swiperefresh.isRefreshing = false
         })
@@ -134,16 +134,16 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
     }
 
     private fun initDataMember() {
-      /*  mHandlerThread = HandlerThread("HandlerThread");
+        mHandlerThread = HandlerThread("HandlerThread");
         mHandlerThread.start();
-        mHandler = Handler(mHandlerThread.getLooper());*/
+        mHandler = Handler(mHandlerThread.getLooper());
         mainViewModel = (requireActivity() as ParentActivity).mainViewModel
         map = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        geofencingClient = LocationServices.getGeofencingClient(requireActivity())
-        geofencingUtility = GeofenceUtility(requireActivity())
+        //geofencingClient = LocationServices.getGeofencingClient(requireActivity())
+        //geofencingUtility = GeofenceUtility(requireActivity())
     }
 
-    private fun addGeofence(latLang: LatLng, radius: Double) : Unit{
+   /* private fun addGeofence(latLang: LatLng, radius: Double) : Unit{
         var geofence = geofencingUtility.getGeofence("geofenceId", latLang, radius.toFloat(),
         Geofence.GEOFENCE_TRANSITION_ENTER or
         Geofence.GEOFENCE_TRANSITION_EXIT)
@@ -162,7 +162,7 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
                 Log.d("Geofence", "geofenceFailure : "+errorMessage)
             }
     }
-
+*/
     private fun addCircle(latLng : LatLng, radius: Double) : Unit{
         var circleOptions = CircleOptions()
         circleOptions.center(latLng)
@@ -174,11 +174,11 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
 
     }
 
-    private fun startUpdatingMap(timeInterval: Long): Job? {
-        isMapActive = true
+    private fun startUpdatingMap(timeInterval: Long) {
+       // isMapActive = true
         var position = mainViewModel.lastIndex.value
-        if(position!! > -1){
-            return CoroutineScope(Dispatchers.IO).launch {
+       // if(position!! > -1){
+            /*return CoroutineScope(Dispatchers.IO).launch {
                 while (isMapActive) {
                     // add your task here
                     delay(timeInterval)
@@ -187,9 +187,21 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
                     }
 
                 }
+            }*/
+            mRunnable = object: Runnable {
+                override fun run() {
+                    if(position != null && position > -1){
+                        CoroutineScope(Dispatchers.IO).launch {
+                            mainViewModel.getLastLocation(mainViewModel.selectedChildId.toString())
+                        }
+                    }
+                    mHandler.postDelayed(this, timeInterval)
+                }
             }
-        }
-        return null
+
+            mHandler.post({ mHandler.post(mRunnable)})
+
+       // }
 
     }
 
@@ -209,7 +221,7 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
         p0.addMarker(MarkerOptions().position(rawalpindiCBlock).title("Rawalpindi C-Block"))
         p0.moveCamera(CameraUpdateFactory.newLatLng(rawalpindiCBlock))
         registerObserver()
-        startUpdatingMap(1500L)
+        startUpdatingMap(3500L)
 
     }
 
@@ -236,11 +248,11 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
           Toast.makeText(requireActivity(),"Background permission required!",Toast.LENGTH_LONG)
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
     }
 
     override fun onPause() {
-        isMapActive = false
+        //isMapActive = false
+        mHandler.removeCallbacks(mRunnable)
         super.onPause()
     }
 
@@ -250,12 +262,12 @@ class LiveTrackFragment : Fragment() , OnMapReadyCallback {
     }
 
     override fun onDestroy() {
-
+        mHandlerThread.quitSafely()
         super.onDestroy()
     }
 
     override fun onResume() {
-        startUpdatingMap(1500L)
+        startUpdatingMap(3500L)
         super.onResume()
     }
 

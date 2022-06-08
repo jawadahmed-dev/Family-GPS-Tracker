@@ -34,6 +34,7 @@
         android:paddingVertical="11dp"
         android:textColorHint="@color/light_blue"
         android:hint="2m"
+        android:text="0"
         android:textColor="@color/light_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

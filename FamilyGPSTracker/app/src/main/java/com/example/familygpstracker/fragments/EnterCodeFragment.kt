@@ -16,8 +16,10 @@ import com.example.familygpstracker.apis.RetrofitHelper
 import com.example.familygpstracker.databinding.FragmentEnterCodeBinding
 import com.example.familygpstracker.models.PairingCode
 import com.example.familygpstracker.utility.SessionManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class EnterCodeFragment : Fragment() {
@@ -56,12 +58,25 @@ class EnterCodeFragment : Fragment() {
 
                 GlobalScope.launch {
 
+                    try {
+
                     var result = childService.linkParent(parentId.toString(), PairingCode(pairingCode))
 
                     if (result != null && result.code() == 200) {
                         startActivity(Intent(activity, ParentActivity::class.java))
                         activity?.finish()
+                         }
                     }
+                    catch (e : Exception){
+                    withContext(Dispatchers.Main) {
+
+                        Toast.makeText(
+                            requireActivity(), "Failed to Connect!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
                 }
             }
             else {

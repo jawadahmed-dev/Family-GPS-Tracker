@@ -12,7 +12,7 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.jvm.Throws
 
-public const val BASE_URL: String = "http://192.168.10.5:8070/"
+public const val BASE_URL: String = "http://192.168.10.9:8070/"
 
 fun buildClient(): OkHttpClient {
     val dispatcher = Dispatcher()

@@ -8,7 +8,7 @@ import com.example.familygpstracker.db.FamilyGPSTrackerDB
 import com.example.familygpstracker.models.ParentDetail
 import com.example.familygpstracker.models.User
 
-class ParentRepository (private val parentService: ParentService, private val db : FamilyGPSTrackerDB) {
+class ParentRepository (private val parentService: ParentService/*, private val db : FamilyGPSTrackerDB*/) {
 
     private var parentDetailLiveData = MutableLiveData<ParentDetail>()
 

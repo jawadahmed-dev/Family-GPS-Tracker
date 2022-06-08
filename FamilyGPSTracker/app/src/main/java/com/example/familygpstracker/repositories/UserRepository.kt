@@ -15,7 +15,7 @@ class UserRepository (private val userService: UserService) {
 
     suspend fun getUserLoginResult(email:String){
 
-        var result = userService.getUserDetails(email)
+        var result = userService.getUser(email)
         userLoginResultLiveData.postValue(result)
 
     }

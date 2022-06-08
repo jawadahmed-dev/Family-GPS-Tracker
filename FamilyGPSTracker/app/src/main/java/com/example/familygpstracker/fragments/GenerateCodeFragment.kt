@@ -14,16 +14,19 @@ import com.example.familygpstracker.apis.RetrofitHelper
 import com.example.familygpstracker.databinding.FragmentGenerateCodeBinding
 import com.example.familygpstracker.utility.NetworkUtils
 import com.example.familygpstracker.utility.SessionManager
+import com.example.familygpstracker.utility.SharedPrefUtility
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 class GenerateCodeFragment : Fragment() {
     private lateinit var binding:FragmentGenerateCodeBinding
+    private lateinit var prefs: SharedPrefUtility
     private lateinit var sessionManager: SessionManager
 
     override fun onCreateView(
@@ -37,15 +40,23 @@ class GenerateCodeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initDataMembers()
+        initViewData()
         changeStatusBarColor()
-        checkCodeExpiry()
+        //checkCodeExpiry()
         binding.refreshBtn.setOnClickListener{
             applyRotateAnimation()
             refreshPairingCode()
         }
     }
 
+    private fun initViewData() {
+        if(prefs.getPairingCode() != ""){
+            binding.pairingCodeText.text = prefs.getPairingCode().toString()
+        }
+    }
+
     private fun initDataMembers() {
+        prefs = SharedPrefUtility(requireActivity())
         sessionManager = SessionManager(requireActivity())
     }
 
@@ -57,7 +68,7 @@ class GenerateCodeFragment : Fragment() {
         }
     }
 
-    private fun checkCodeExpiry() {
+   /* private fun checkCodeExpiry() {
         var expiryTimeString = sessionManager.getExpiryTime()
         var currentTimeString = SimpleDateFormat("HH:mm a").format(Date())
 
@@ -73,7 +84,7 @@ class GenerateCodeFragment : Fragment() {
                 binding.pairingCodeInfo.setTextColor(requireActivity().getColor(R.color.cherry_red_opacity_55))
             }
         }
-    }
+    }*/
 
     private fun isExpiryTimeHasPassed(expiryTimeString:String, currentTimeString:String): Boolean {
         var expiryTime : Date = SimpleDateFormat("HH:mm a").parse(expiryTimeString)
@@ -86,33 +97,50 @@ class GenerateCodeFragment : Fragment() {
 
         var childService = RetrofitHelper.buildRetrofit().create(ChildService::class.java)
         if(NetworkUtils.haveNetworkConnection(requireActivity())) {
+
             GlobalScope.launch {
-                var result = childService.getPairingCode(sessionManager.getChildId().toString())
+                try {
 
-                if (result != null && result.code() == 200) {
+                    var result = childService.getPairingCode(sessionManager.getChildId().toString())
 
-                    withContext(Dispatchers.Main) {
-                        binding.refreshBtn.clearAnimation()
-                        binding.pairingCodeText.text = result.body()?.code
-                        var expiryTimeString =
-                            getCodeExpiryTime(SimpleDateFormat("HH:mm a").format(Date()))
-                        binding.pairingCodeInfo.text =
-                            "*Your code is only valid till " + expiryTimeString
-                        sessionManager.setExpiryTime(expiryTimeString)
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            binding.pairingCodeInfo.setTextColor(requireActivity().getColor(R.color.light_blue_opacity_50))
+                    if (result != null && result.code() == 200) {
+
+                        withContext(Dispatchers.Main) {
+                            binding.refreshBtn.clearAnimation()
+                            binding.pairingCodeText.text = result.body()?.code
+                            prefs.storePairingCode(result.body()?.code.toString())
+                            /* var expiryTimeString =
+                                 getCodeExpiryTime(SimpleDateFormat("HH:mm a").format(Date()))*/
+                            /*binding.pairingCodeInfo.text =
+                                "*Your code is only valid till " + expiryTimeString
+                            sessionManager.setExpiryTime(expiryTimeString)*/
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                binding.pairingCodeInfo.setTextColor(requireActivity().getColor(R.color.light_blue_opacity_50))
+                            }
+                        }
+
+                    }
+                    else {
+                        withContext(Dispatchers.Main) {
+                            binding.refreshBtn.clearAnimation()
+                            Toast.makeText(
+                                requireActivity(), result.message(),
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
 
-                } else {
+                }
+                catch (e : Exception){
                     withContext(Dispatchers.Main) {
                         binding.refreshBtn.clearAnimation()
                         Toast.makeText(
-                            requireActivity(), result.message(),
+                            requireActivity(), "Failed to Connect!",
                             Toast.LENGTH_LONG
                         ).show()
                     }
                 }
+
             }
         }
         else {
@@ -131,7 +159,7 @@ class GenerateCodeFragment : Fragment() {
 
     }
 
-    private fun getCodeExpiryTime(time: String): String {
+    /*private fun getCodeExpiryTime(time: String): String {
 
         var timeHour = getCodeExpiryTimeHour(time.substring(0,2).toInt())
         var timePeriod = getCodeExpiryTimePeriod(time.substring(6,8),timeHour)
@@ -155,6 +183,6 @@ class GenerateCodeFragment : Fragment() {
         if(hour >= 11) return (hour - 0)
         else return (hour + 2)
     }
-
+*/
 
 }

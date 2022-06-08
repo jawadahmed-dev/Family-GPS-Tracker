@@ -37,7 +37,7 @@ class LinkDeviceActivity : AppCompatActivity() {
         initDataMembers()
         changeStatusBarColor()
         var key = intent.getIntExtra("key",1)
-        //updateDeviceToken()
+        updateDeviceToken()
        // storeFCMToken()
         setUpViewModel()
 
@@ -76,20 +76,29 @@ class LinkDeviceActivity : AppCompatActivity() {
     private fun updateDeviceToken() {
         var parentService = RetrofitHelper.buildRetrofit().create(ParentService::class.java)
         GlobalScope.launch {
-            var result = parentService.updateDeviceToken(sessionManager.getParentId().toString(),
-                sessionManager.getDeviceToken().toString())
-            if(result != null && result.code() == 200){
-                withContext(Dispatchers.Main){
-                    Toast.makeText(
-                        this@ParentLinkDeviceActivity, "Token Updated!",
-                        Toast.LENGTH_LONG
-                    ).show()
+            try {
+                var result = parentService.updateDeviceToken(sessionManager.getParentId().toString(),
+                    sessionManager.getDeviceToken().toString())
+                if(result != null && result.code() == 200){
+                    withContext(Dispatchers.Main){
+                        Toast.makeText(
+                            this@LinkDeviceActivity, "Token Updated!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
-            }
-            else {
+                else {
+                    withContext(Dispatchers.Main){
+                        Toast.makeText(
+                            this@LinkDeviceActivity, "Token couldnt be Updated!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
                 withContext(Dispatchers.Main){
                     Toast.makeText(
-                        this@ParentLinkDeviceActivity, "Token couldnt be Updated!",
+                        this@LinkDeviceActivity, "Failed to Connect!",
                         Toast.LENGTH_LONG
                     ).show()
                 }

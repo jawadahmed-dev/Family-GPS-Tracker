@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.familygpstracker.R
 import com.example.familygpstracker.activities.ParentActivity
-import com.example.familygpstracker.activities.ParentLinkDeviceActivity
+import com.example.familygpstracker.activities.LinkDeviceActivity
 import com.example.familygpstracker.adapter.ChildListAdapter
 import com.example.familygpstracker.adapter.ViewPagerAdapter
 import com.example.familygpstracker.databinding.FragmentHomeBinding
@@ -105,7 +105,7 @@ class HomeFragment : Fragment() {
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         super.onOptionsItemSelected(item)
-        var intent = Intent(requireActivity(),ParentLinkDeviceActivity::class.java)
+        var intent = Intent(requireActivity(),LinkDeviceActivity::class.java)
         intent.putExtra("key",0)
         startActivity(intent)
         requireActivity().finish()

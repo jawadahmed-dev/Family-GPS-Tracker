@@ -6,7 +6,7 @@ import com.example.familygpstracker.apis.NotificationService
 import com.example.familygpstracker.db.FamilyGPSTrackerDB
 import com.example.familygpstracker.models.Notification
 
-class NotificationRepository (private val notificationService: NotificationService, private val db : FamilyGPSTrackerDB) {
+class NotificationRepository (private val notificationService: NotificationService/*, private val db : FamilyGPSTrackerDB*/) {
 
     private var notificationListLiveData = MutableLiveData<List<Notification>>()
 

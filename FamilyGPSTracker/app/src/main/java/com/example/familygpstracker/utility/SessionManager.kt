@@ -34,6 +34,8 @@ class SessionManager(private val context: Context?) {
 
     val DEVICE_TOKEN = "deviceToken"
 
+    val CHILD_NAME = "childName"
+
     val KEY_CHILD_PARENT_ID = "childParentId"
 
     // Child Id (make variable public to access from outside)
@@ -159,9 +161,9 @@ class SessionManager(private val context: Context?) {
     fun logoutUser() {
         // Clearing all data from Shared Preferences
         editor?.clear()
-        editor?.commit()
+        editor?.apply()
 
-        // After logout redirect user to Loing Activity
+       /* // After logout redirect user to Loing Activity
         val i = Intent(_context, AuthenticationActivity::class.java)
         // Closing all the Activities
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -171,12 +173,22 @@ class SessionManager(private val context: Context?) {
 
         // Staring Login Activity
         _context?.startActivity(i)
-        (_context as ParentActivity)?.finish()
+        (_context as ParentActivity)?.finish()*/
     }
 
     fun storeToken(token:String){
         editor?.putString(DEVICE_TOKEN,token)
         editor?.commit()
+    }
+
+    fun storeChildName(name:String){
+        editor?.putString(CHILD_NAME,name)
+        editor?.commit()
+    }
+
+    fun getChildName():String{
+        return pref?.getString(CHILD_NAME,"").toString()
+
     }
 
     /**

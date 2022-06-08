@@ -32,15 +32,9 @@
             </intent-filter>
         </receiver>
 
+
         <activity
-            android:name=".activities.ChildLinkDeviceActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activities.ParentLinkDeviceActivity"
+            android:name=".activities.LinkDeviceActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

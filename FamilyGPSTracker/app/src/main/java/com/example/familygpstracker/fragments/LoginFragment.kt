@@ -1,5 +1,6 @@
 package com.example.familygpstracker.fragments
 
+import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.util.Patterns
@@ -17,7 +18,7 @@ import android.content.Intent
 import com.example.familygpstracker.activities.AuthenticationActivity
 import com.example.familygpstracker.activities.ChildActivity
 import com.example.familygpstracker.activities.LinkDeviceActivity
-import com.example.familygpstracker.activities.ParentLinkDeviceActivity
+
 import com.example.familygpstracker.models.User
 import com.example.familygpstracker.utility.NetworkUtils
 import com.example.familygpstracker.utility.SessionManager
@@ -35,6 +36,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private var isPasswordValid = false
     private var isFormValid = false
     private lateinit var binding : FragmentLoginBinding
+
     private val directionToDecideUserFragment=LoginFragmentDirections.actionLoginFragmentToDecideUserFragment()
 
     override fun onCreateView(
@@ -59,26 +61,30 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         authViewModel.userLoginResult.observe(requireActivity(),{
 
             binding.progressBar.visibility = View.INVISIBLE
-            if (it.code() == 200) {
 
-                var user = it.body()
+            if (isAdded) {
+                if (it.code() == 200) {
 
-                if (user?.parent?.password == binding.password.text.toString() || user?.child?.password == binding.password.text.toString()) {
-                    createLoginSession(user)
-                    navigateToNext(user?.userType)
+                    var user = it.body()
+
+                    if (user?.parent?.password == binding.password.text.toString() || user?.child?.password == binding.password.text.toString()) {
+                        createLoginSession(user)
+                        navigateToNext(user?.userType)
+                    }
+                    else {
+                        Toast.makeText(
+                            requireActivity(), "Password is not correct!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
                 else {
                     Toast.makeText(
-                        requireActivity(), "Password is not correct!",
+                        requireActivity(), "Email is not correct!",
                         Toast.LENGTH_LONG
                     ).show()
                 }
-            }
-            else {
-                Toast.makeText(
-                    requireActivity(), "Email is not correct!",
-                    Toast.LENGTH_LONG
-                ).show()
+
             }
 
         })
@@ -86,6 +92,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun initDataMembers() {
        authViewModel = (requireActivity() as AuthenticationActivity).authViewModel
+
     }
 
     private fun changeStatusBarColor() {
@@ -129,7 +136,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
        /* var retrofit = RetrofitHelper.buildRetrofit()
         var userService = retrofit.create(UserService::class.java)*/
-        if(NetworkUtils.haveNetworkConnection(requireActivity())) {
+        if(!NetworkUtils.haveNetworkConnection(requireActivity())) {
 
             Toast.makeText(
                 requireActivity(), "No Internet Available!",

@@ -102,15 +102,21 @@ class GeofenceFragment : Fragment() {
 
         binding.AddGeofenceBtn.setOnClickListener({
 
+            if(binding.radiusEditText.text == null){
+                return@setOnClickListener
+            }
+
             var radius = binding.radiusEditText.text.toString().toDouble()
             var position = mainViewModel.lastIndex.value
             var selectedChildId = mainViewModel.selectedChildId.value.toString()
 
-            if(currentLocation != null){
+
+
+            if(currentLocation != null && selectedChildId != null){
 
                 var createGeofence = makePayload(radius)
 
-                if (radius != null && position!! > -1 ){
+                if (radius != null && position!= null && position > -1 ){
 
                     CoroutineScope(Dispatchers.IO).launch {
                         if(NetworkUtils.isNetworkAvailable(requireActivity()) == true){
@@ -144,6 +150,9 @@ class GeofenceFragment : Fragment() {
                     }
 
                 }
+                else {
+                    Toast.makeText(requireActivity(),"Select Child First!",Toast.LENGTH_SHORT).show()
+                }
             }
 
         })
@@ -159,6 +168,11 @@ class GeofenceFragment : Fragment() {
 
     private fun makePayload(radius : Double): CreateGeofence {
         return CreateGeofence(currentLocation.latitude,currentLocation.longitude,radius,(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT).toString())
+    }
+
+    private fun getGeofenceList(){
+
+
     }
 
 }

@@ -12,7 +12,9 @@ import com.example.familygpstracker.repositories.*
 import com.example.familygpstracker.utility.NetworkUtils
 import com.example.familygpstracker.utility.SessionManager
 import com.example.familygpstracker.utility.SharedPrefUtility
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.reflect.Array
 
 class MainViewModel (
@@ -46,11 +48,17 @@ class MainViewModel (
 //                locationRepository.getLastTenLocations("2C1852C3-07F6-4976-98AA-38DFF2C550CF")
                 }
                 else{
-                    Toast.makeText(context,"Network not available",Toast.LENGTH_LONG).show()
+                    withContext(Dispatchers.Main){
+                        Toast.makeText(context,"Network not available",Toast.LENGTH_LONG).show()
+                    }
+
                 }
             }
             catch(e:Exception){
-                Toast.makeText(context,"Failed to Connect",Toast.LENGTH_LONG).show()
+                withContext(Dispatchers.Main){
+                    Toast.makeText(context,"Failed to Connect",Toast.LENGTH_LONG).show()
+                }
+
             }
 
 
@@ -90,8 +98,8 @@ class MainViewModel (
     val selectedChildId : LiveData<String?>
         get() = selectedChildIdLiveData
 
-    val user : LiveData<User>
-    get() = userRepository.user
+  /*  val user : LiveData<User>
+    get() = userRepository.user*/
 
     val parentDetail : LiveData<ParentDetail>
         get() = parentRepository.parentDetail

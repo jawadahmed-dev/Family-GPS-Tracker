@@ -15,7 +15,8 @@ import com.example.familygpstracker.databinding.FragmentDecideUserBinding
 class DecideUserFragment : Fragment() {
     private var userType:String? = null
     private lateinit var binding: FragmentDecideUserBinding
-    private lateinit var directionToSignUpFragment :DecideUserFragmentDirections
+    private var directionToParentSignUpFragment = DecideUserFragmentDirections.actionDecideUserFragmentToParentSignUpFragment()
+    private var directionToChildSignUpFragment = DecideUserFragmentDirections.actionDecideUserFragmentToChildSignUpFragment()
     private val directionToLoginFragment = DecideUserFragmentDirections.actionDecideUserFragmentToLoginFragment()
 
     override fun onCreateView(
@@ -51,7 +52,11 @@ class DecideUserFragment : Fragment() {
         })
         binding.nextBtn.setOnClickListener({view ->
             if(userType!=null){
-                findNavController().navigate(DecideUserFragmentDirections.actionDecideUserFragmentToSignUpFragment(userType))
+                when (userType){
+                    "Family Manager" -> findNavController().navigate(directionToParentSignUpFragment)
+                    "Family Member"  -> findNavController().navigate(directionToChildSignUpFragment)
+                }
+                //findNavController().navigate(DecideUserFragmentDirections.actionDecideUserFragmentToSignUpFragment(userType))
             }else{
                 Toast.makeText(requireActivity(),"Must Select User Type",Toast.LENGTH_LONG).show()
             }

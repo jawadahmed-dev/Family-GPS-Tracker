@@ -1,5 +1,6 @@
 package com.example.familygpstracker.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.familygpstracker.R
+import com.example.familygpstracker.activities.AuthenticationActivity
 import com.example.familygpstracker.activities.ParentActivity
 import com.example.familygpstracker.databinding.FragmentMenuBinding
 import com.example.familygpstracker.utility.SessionManager
@@ -16,6 +18,7 @@ import com.example.familygpstracker.utility.SessionManager
 class MenuFragment : Fragment() {
 
     private lateinit var binding : FragmentMenuBinding
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,8 +31,13 @@ class MenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initDataMembers()
         registerListener()
         bindDataToView()
+    }
+
+    private fun initDataMembers() {
+        sessionManager = SessionManager(requireActivity())
     }
 
     private fun bindDataToView() {
@@ -38,7 +46,14 @@ class MenuFragment : Fragment() {
 
     private fun registerListener() {
         binding.profileOptionLogout.setOnClickListener({
-            (requireActivity() as ParentActivity).sessionManager.logoutUser()
+
+            if(isAdded){
+                sessionManager.logoutUser()
+                var intent = Intent(requireActivity(),AuthenticationActivity::class.java)
+                startActivity(intent)
+                (requireActivity()).finish()
+            }
+
         })
     }
 

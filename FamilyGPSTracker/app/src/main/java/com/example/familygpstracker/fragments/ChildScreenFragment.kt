@@ -124,7 +124,7 @@ class ChildScreenFragment : Fragment() {
                     NotificationDto(
                         "i need help",
                         true, activity.sessionManager.getChildParentId().toString(),
-                        activity.sessionManager.getChildId().toString(), "Help Alert"
+                        activity.sessionManager.getChildId().toString(), activity.sessionManager.getChildName().toString()
                     )
                 )
                 if (result != null && result.code() == 200) {

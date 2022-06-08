@@ -10,5 +10,6 @@ data class ChildDetail(
     val name: String,
     @Ignore
     val parent: Parent,
-    val password: String
+    val password: String,
+    val geofences: List<Geofence>
 )

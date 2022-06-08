@@ -23,6 +23,9 @@ class SharedPrefUtility(private val context: Context?)  {
     // Parent's child Id Key
     private val KEY_PARENT_CHILD_ID = "Parent_ChildID"
 
+    // Child Pairing Code
+    private val KEY_CHILD_PAIRING_CODE = "Child_Pairing_Code"
+
     init {
         _context = context
         pref = _context?.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
@@ -32,6 +35,15 @@ class SharedPrefUtility(private val context: Context?)  {
     fun storeParentChildId(childID:String){
         editor?.putString(KEY_PARENT_CHILD_ID,childID)
         editor?.commit()
+    }
+
+    fun storePairingCode(code:String){
+        editor?.putString(KEY_CHILD_PAIRING_CODE,code)
+        editor?.commit()
+    }
+
+    fun getPairingCode() : String? {
+        return pref!!.getString(KEY_CHILD_PAIRING_CODE, "")
     }
 
     fun getParentChildId() : String? {

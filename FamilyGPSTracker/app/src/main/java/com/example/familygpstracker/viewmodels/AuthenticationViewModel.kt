@@ -37,10 +37,10 @@ class AuthenticationViewModel (
 
         viewModelScope.launch {
             try {
-                if(NetworkUtils.haveNetworkConnection(context) ==true ){
+                if(NetworkUtils.haveNetworkConnection(context)){
                     // userRepository.getUser("jawad@gmail.com")
-                    parentRepository.getParentDetails(sessionManager.getParentId().toString())
-                    notificationRepository.getAllNotifications()
+     //               parentRepository.getParentDetails(sessionManager.getParentId().toString())
+     //               notificationRepository.getAllNotifications()
 //                locationRepository.getLastLocation("2C1852C3-07F6-4976-98AA-38DFF2C550CF")
 //                locationRepository.getLastTenLocations("2C1852C3-07F6-4976-98AA-38DFF2C550CF")
                 }

@@ -7,6 +7,7 @@ import android.os.Build
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -18,8 +19,12 @@ import com.example.familygpstracker.apis.RetrofitHelper
 import com.example.familygpstracker.databinding.ActivityChildBinding
 import com.example.familygpstracker.models.ChildDetail
 import com.example.familygpstracker.services.MyBackgroundLocationService
+import com.example.familygpstracker.utility.GeofenceUtility
 import com.example.familygpstracker.utility.NetworkUtils
 import com.example.familygpstracker.utility.SessionManager
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -30,6 +35,8 @@ class ChildActivity : AppCompatActivity() {
     lateinit var binding : ActivityChildBinding
     lateinit var childDetail: ChildDetail
     private var navController: NavController? = null
+    private lateinit var geofencingClient: GeofencingClient
+    private lateinit var geofencingUtility: GeofenceUtility
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -199,14 +206,24 @@ class ChildActivity : AppCompatActivity() {
                     if (childDetail?.parent != null) {
 
                         sessionManager.storeChildParentId(childDetail?.parent.parentId)
+                        sessionManager.storeChildName(childDetail?.name)
                         withContext(Dispatchers.Main) {
                             navController?.setGraph(R.navigation.child_link_device_nav_graph)
                             navController?.navigate(R.id.childScreenFragment)
                         }
 
+                        if(childDetail.geofences != null ){
+                            for (geofence in childDetail?.geofences){
+                                var latLang = LatLng(geofence.latitude,geofence.longitude)
+                                addGeofence(latLang,geofence.radius)
+                            }
+                        }
+
                         /*bindData(childDetail)
                     startFetchingLocation()*/
-                    } else {
+                    }
+
+                    else {
 
                         withContext(Dispatchers.Main) {
                             navController?.setGraph(R.navigation.child_link_device_nav_graph)
@@ -252,5 +269,25 @@ class ChildActivity : AppCompatActivity() {
         }
     }*/
 
+
+    private fun addGeofence(latLang: LatLng, radius: Double) : Unit{
+        var geofence = geofencingUtility.getGeofence("geofenceId", latLang, radius.toFloat(),
+            Geofence.GEOFENCE_TRANSITION_ENTER or
+                    Geofence.GEOFENCE_TRANSITION_EXIT)
+        var geofencingRequest = geofencingUtility.getGeofencingRequest(geofence)
+        var pendingIntent = geofencingUtility.getPendingIntent()
+        if (!checkLocationPermission()) {
+            requestPermissionLocation()
+        }
+        geofencingClient.addGeofences(geofencingRequest,pendingIntent)
+            .addOnSuccessListener {
+                Log.d("Geofence", "geofenceSuccess : geofence added")
+
+            }
+            .addOnFailureListener {
+                var errorMessage =  geofencingUtility.getErrorString(it)
+                Log.d("Geofence", "geofenceFailure : "+errorMessage)
+            }
+    }
 
 }
