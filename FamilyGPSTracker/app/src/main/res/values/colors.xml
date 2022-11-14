@@ -11,6 +11,7 @@
     <color name="dark_red">#8B0000</color>
     <color name="dark_grey">#A9A9A9</color>
     <color name="light_grey">#F2F2F2</color>
+    <color name="grey">#D3D3D3</color>
     <color name="light_cyan">#3bcaed</color>
     <color name="light_blue">#68BBDC</color>
     <color name="light_blue_opacity_5">#0D68BBDC</color>
@@ -24,5 +25,9 @@
     <color name="light_blue_opacity_45">#7368BBDC</color>
     <color name="light_blue_opacity_50">#8068BBDC</color>
     <color name="light_blue_opacity_55">#8C68BBDC</color>
+    <color name="red">#FF0000</color>
+    <color name="red_opacity_55">#8CFF0000</color>
+    <color name="cherry_red">#D2042D</color>
+    <color name="cherry_red_opacity_55">#8CD2042D</color>
 
 </resources>

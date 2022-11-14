@@ -1,10 +1,15 @@
 package com.example.familygpstracker.models
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "Parent")
 data class Parent(
-    val children: List<Any>,
-    val deviceToken: String,
-    val notifications: List<Notification>,
+    val email: String,
+    val name: String,
+    @PrimaryKey
     val parentId: String,
+    val password: String,
     val phoneNumber: String,
-    val users: List<Any>
+    val deviceToken: String
 )

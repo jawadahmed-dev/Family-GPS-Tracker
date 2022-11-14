@@ -5,56 +5,84 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.familygpstracker.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.familygpstracker.activities.ParentActivity
+import com.example.familygpstracker.adapter.NotificationListAdapter
+import com.example.familygpstracker.databinding.FragmentNotificationsBinding
+import com.example.familygpstracker.models.Notification
+import com.example.familygpstracker.viewmodels.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [NotificationsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class NotificationsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var binding: FragmentNotificationsBinding
+    private lateinit var viewModel: MainViewModel
+    private lateinit var notificationListAdapter: NotificationListAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notifications, container, false)
+        binding = FragmentNotificationsBinding.inflate(layoutInflater)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment NotificationsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NotificationsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initDataMembers()
+        setUpRecyclerView()
+        registerListeners()
+    }
+
+    private fun registerListeners() {
+
+        viewModel.notificationList.observe(requireActivity()  , {
+            notificationListAdapter.setNotifications(it)
+            binding.swiperefresh.isRefreshing = false
+        }  )
+
+        binding.swiperefresh.setOnRefreshListener({
+            if(viewModel.selectedChildId == null){
+                binding.swiperefresh.isRefreshing = false
+
+            }
+            else {
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.getALLNotifications()
                 }
             }
+
+        })
     }
+
+    private fun setUpRecyclerView() {
+
+        binding.notificationRecyclerView.layoutManager = LinearLayoutManager(requireActivity(),LinearLayoutManager.VERTICAL,false)
+        binding.notificationRecyclerView.adapter = notificationListAdapter
+    }
+
+    private fun initDataMembers() {
+
+        initViewModel()
+        initAdapter()
+
+    }
+
+    private fun initAdapter() {
+        notificationListAdapter = NotificationListAdapter(ArrayList<Notification>(),requireActivity())
+    }
+
+    private fun initViewModel() {
+        /*var notificationService = RetrofitHelper.getInstance().create(NotificationService::class.java)
+        var notificationRepository = NotificationRepository(notificationService)*/
+        viewModel = (requireActivity() as ParentActivity).mainViewModel
+        /*ViewModelProvider(requireActivity(),
+        NotificationViewModelFactory(notificationRepository)
+    ).get(NotificationViewModel::class.java)*/
+    }
+
 }

@@ -2,4 +2,8 @@
     <string name="app_name">FamilyGPSTracker</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="help_channel_id">helpId</string>
+    <string name="help_channel">help</string>
+    <string name="help_channel_description">this is a help channel</string>
+
 </resources>

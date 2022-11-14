@@ -6,33 +6,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.MenuFragment">
 
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="240dp"
-        android:id="@+id/profileBackground"
-        android:background="@color/light_blue"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        >
 
-        <ImageView
-            android:id="@+id/profileIcon"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/ic_baseline_account_circle_24" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/profileText"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:text="John Doe"
-            android:textColor="@color/white"
-            android:layout_marginTop="10dp"
-            android:layout_below="@+id/profileIcon"
-            android:layout_centerHorizontal="true"/>
-    </RelativeLayout>
+    <ImageView
+        android:id="@+id/profileIcon"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/user"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/profileText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profileIcon"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profileIcon"
+        android:layout_marginTop="12dp"
+        android:text="John Doe"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/light_cyan" />
+
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="50dp"
@@ -42,25 +41,24 @@
         android:id="@+id/profileOptionFeedback"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profileBackground">
+        app:layout_constraintTop_toBottomOf="@id/profileText">
 
         <ImageView
             android:id="@+id/menuFeedBackIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_feedback_34"
             android:layout_centerVertical="true"
-            />
+            android:src="@drawable/ic_baseline_feedback_34" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:textColor="@color/light_blue"
             android:layout_toRightOf="@+id/menuFeedBackIcon"
             android:text="Feedback"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/light_cyan" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -89,7 +87,7 @@
             android:layout_toRightOf="@+id/menuAboutUsIcon"
             android:text="About us"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/light_blue" />
+            android:textColor="@color/light_cyan" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -111,15 +109,15 @@
             android:src="@drawable/logout" />
 
         <TextView
+            android:id="@+id/menuOptionLogout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:id="@+id/menuOptionLogout"
             android:layout_marginLeft="20dp"
             android:layout_toRightOf="@+id/menuLogoutIcon"
             android:text="logout"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/light_blue" />
+            android:textColor="@color/light_cyan" />
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

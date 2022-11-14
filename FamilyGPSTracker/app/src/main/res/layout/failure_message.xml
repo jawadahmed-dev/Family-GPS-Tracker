@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:id="@+id/failureMessageHeader"
+        android:background="@color/light_blue">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_baseline_clear_24" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textAlignment="center"
+        android:id="@+id/failureMessageTitle"
+        android:textColor="@color/light_blue"
+        android:text="Signup Failed ! "
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/failureMessage"
+        android:layout_marginTop="20dp"
+        android:textAlignment="center"
+        android:textColor="@color/light_blue_opacity_50"
+        android:text="Something Went Wrong!"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        />
+        <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/failureMessageButton"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="ok"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/light_blue"
+        android:background="@drawable/shape_button_light"
+        />
+    </LinearLayout>
+
+
+</LinearLayout>

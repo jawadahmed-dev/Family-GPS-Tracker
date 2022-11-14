@@ -12,20 +12,32 @@ import com.example.familygpstracker.R
 
 class SplashFragment : Fragment(R.layout.fragment_splash) {
 
+    val direction=SplashFragmentDirections.actionSplashFragmentToLoginFragment()
+    private lateinit var mRunnable : Runnable
+    private lateinit var mHandler: Handler
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val direction=SplashFragmentDirections.actionSplashFragmentToLoginFragment()
-        Handler(Looper.getMainLooper()).postDelayed({
+        mRunnable = Runnable{
             findNavController().navigate(direction)
-        }, 2500)
+        }
+        mHandler = Handler(Looper.getMainLooper())
         changeStatusBarColor()
     }
 
+    override fun onPause() {
+        mHandler.removeCallbacks(mRunnable)
+        super.onPause()
+    }
     private fun changeStatusBarColor() {
         if (Build.VERSION.SDK_INT >= 21) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requireActivity().window.statusBarColor= resources.getColor(R.color.light_cyan,null)
             }
         }
+    }
+
+    override fun onResume() {
+        mHandler.postDelayed(mRunnable, 2500)
+        super.onResume()
     }
 }

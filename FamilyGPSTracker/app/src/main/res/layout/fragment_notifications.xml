@@ -1,176 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.NotificationsFragment">
+    >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragments.NotificationsFragment">
 
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:id="@+id/list1"
-        android:layout_marginTop="40dp"
-        android:layout_marginLeft="40dp"
-        android:background="@drawable/shape_bottom_border"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/listIcon"
-            android:layout_centerVertical="true"
-            android:src="@drawable/walk"/>
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/swiperefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="24dp"
-            android:layout_toRightOf="@id/listIcon"
-            android:text="Device is power off"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/light_blue"
-            android:textSize="24dp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/notificationRecyclerView"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:text="Yesterday"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/light_blue"
-            android:textSize="12dp"
-             />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:id="@+id/list2"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="40dp"
-        android:background="@drawable/shape_bottom_border"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/list1">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/listIcon2"
-            android:layout_centerVertical="true"
-            android:src="@drawable/walk"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="24dp"
-            android:layout_toRightOf="@id/listIcon2"
-            android:text="Child is at Home"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/light_blue"
-            android:textSize="24dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:text="Yesterday"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/light_blue"
-            android:textSize="12dp"
-            />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:id="@+id/list3"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/shape_bottom_border"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/list2">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/listIcon3"
-            android:layout_centerVertical="true"
-            android:src="@drawable/walk"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="24dp"
-            android:layout_toRightOf="@id/listIcon3"
-            android:text="Child is at Shcool"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/light_blue"
-            android:textSize="24dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:text="Yesterday"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/light_blue"
-            android:textSize="12dp"
-            />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:id="@+id/list4"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="40dp"
-        android:background="@drawable/shape_bottom_border"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/list3">
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/listIcon4"
-            android:layout_centerVertical="true"
-            android:src="@drawable/walk"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="24dp"
-            android:layout_toRightOf="@id/listIcon4"
-            android:text="Child is at Home"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/light_blue"
-            android:textSize="24dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:text="Today"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/light_blue"
-            android:textSize="12dp"
-            />
-
-    </RelativeLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,9 +1,9 @@
 package com.example.familygpstracker.models
 
 data class Location(
-    val childId: String,
-    val latitude: Int,
+    val latitude: Double,
     val locationId: String,
-    val longitude: Int,
-    val time: String
+    val longitude: Double,
+    val time: String,
+    val childName: String
 )
